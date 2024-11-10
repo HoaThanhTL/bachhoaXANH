@@ -9,16 +9,29 @@ import {
 const newArrivalsData = [
   // Category 1: Hàng tươi sống
   {
+    _id: "100000",
+    img: newArrOne,
+    productName: "Round Table Clock",
+    originalPrice: 44.00,
+    discountPercentage: 10,  
+    discountedPrice: 39.60, 
+    color: "Black",
+    badge: true,
+    sale: true,
+    subcategory: "Rau củ",
+    des: "Sản phẩm tươi sống chất lượng cao.",
+  },
+  {
     _id: "100001",
     img: newArrOne,
     productName: "Round Table Clock",
     originalPrice: 44.00,
-    discountPercentage: 0, // Không giảm giá
-    discountedPrice: null, // Giá sau khi giảm, sẽ được tính
+    discountPercentage: 0, 
+    discountedPrice: null, 
     color: "Black",
     badge: true,
     sale: true,
-    category: "Hàng tươi sống",
+    subcategory: "Rau củ",
     des: "Sản phẩm tươi sống chất lượng cao.",
   },
   {
@@ -26,12 +39,12 @@ const newArrivalsData = [
     img: newArrTwo,
     productName: "Smart Watch",
     originalPrice: 250.00,
-    discountPercentage: 10, // 10% giảm giá
+    discountPercentage: 10, 
     discountedPrice: null,
     color: "Black",
     badge: true,
     sale: false,
-    category: "Hàng tươi sống",
+    subcategory: "Trái cây", 
     des: "Sản phẩm tươi sống chất lượng cao.",
   },
   {
@@ -43,7 +56,7 @@ const newArrivalsData = [
     discountedPrice: null,
     color: "Mixed",
     badge: true,
-    category: "Hàng tươi sống",
+    subcategory: "Thịt cá", // Sản phẩm này thuộc subcategory "Thịt cá"
     des: "Sản phẩm tươi sống chất lượng cao.",
   },
   {
@@ -56,7 +69,7 @@ const newArrivalsData = [
     color: "Mixed",
     badge: false,
     sale: true,
-    category: "Hàng tươi sống",
+    subcategory: "Rau củ", // Sản phẩm này thuộc subcategory "Rau củ"
     des: "Sản phẩm tươi sống chất lượng cao.",
   },
   {
@@ -69,7 +82,7 @@ const newArrivalsData = [
     color: "Black",
     badge: false,
     sale: true,
-    category: "Hàng tươi sống",
+    subcategory: "Trái cây", // Sản phẩm này thuộc subcategory "Trái cây"
     des: "Sản phẩm tươi sống chất lượng cao.",
   },
   // Category 2: Đồ gia dụng
@@ -83,7 +96,7 @@ const newArrivalsData = [
     color: "Silver",
     badge: true,
     sale: true,
-    category: "Đồ gia dụng",
+    subcategory: "Đồ bếp", // Sản phẩm này thuộc subcategory "Đồ bếp"
     des: "Đồ gia dụng cao cấp, bền bỉ.",
   },
   {
@@ -96,7 +109,7 @@ const newArrivalsData = [
     color: "White",
     badge: true,
     sale: true,
-    category: "Đồ gia dụng",
+    subcategory: "Đồ bếp", // Sản phẩm này thuộc subcategory "Đồ bếp"
     des: "Đồ gia dụng cao cấp, bền bỉ.",
   },
   {
@@ -109,7 +122,7 @@ const newArrivalsData = [
     color: "Blue",
     badge: true,
     sale: false,
-    category: "Đồ gia dụng",
+    subcategory: "Thiết bị vệ sinh", // Sản phẩm này thuộc subcategory "Thiết bị vệ sinh"
     des: "Đồ gia dụng cao cấp, bền bỉ.",
   },
   {
@@ -122,7 +135,7 @@ const newArrivalsData = [
     color: "Black",
     badge: false,
     sale: false,
-    category: "Đồ gia dụng",
+    subcategory: "Đồ bếp", // Sản phẩm này thuộc subcategory "Đồ bếp"
     des: "Đồ gia dụng cao cấp, bền bỉ.",
   },
   {
@@ -135,7 +148,7 @@ const newArrivalsData = [
     color: "Black",
     badge: false,
     sale: false,
-    category: "Đồ gia dụng",
+    subcategory: "Đồ bếp", // Sản phẩm này thuộc subcategory "Đồ bếp"
     des: "Đồ gia dụng cao cấp, bền bỉ.",
   },
   // Category 3: Thời trang
@@ -149,7 +162,7 @@ const newArrivalsData = [
     color: "Red",
     badge: true,
     sale: false,
-    category: "Thời trang",
+    subcategory: "Quần áo nam", // Sản phẩm này thuộc subcategory "Quần áo nam"
     des: "Thời trang mới nhất, chất liệu tốt.",
   },
   {
@@ -162,7 +175,7 @@ const newArrivalsData = [
     color: "Blue",
     badge: true,
     sale: false,
-    category: "Thời trang",
+    subcategory: "Quần áo nam", // Sản phẩm này thuộc subcategory "Quần áo nam"
     des: "Thời trang mới nhất, chất liệu tốt.",
   },
   {
@@ -175,7 +188,7 @@ const newArrivalsData = [
     color: "White",
     badge: true,
     sale: false,
-    category: "Thời trang",
+    subcategory: "Phụ kiện", // Sản phẩm này thuộc subcategory "Phụ kiện"
     des: "Thời trang mới nhất, chất liệu tốt.",
   },
   {
@@ -188,7 +201,7 @@ const newArrivalsData = [
     color: "Black",
     badge: false,
     sale: false,
-    category: "Thời trang",
+    subcategory: "Quần áo nữ", // Sản phẩm này thuộc subcategory "Quần áo nữ"
     des: "Thời trang mới nhất, chất liệu tốt.",
   },
   {
@@ -201,7 +214,7 @@ const newArrivalsData = [
     color: "Yellow",
     badge: false,
     sale: false,
-    category: "Thời trang",
+    subcategory: "Phụ kiện", // Sản phẩm này thuộc subcategory "Phụ kiện"
     des: "Thời trang mới nhất, chất liệu tốt.",
   },
   // Category 4: Bestsellers
@@ -215,6 +228,7 @@ const newArrivalsData = [
     color: "Black and White",
     badge: true,
     sale: false,
+    subcategory: "Phụ kiện", // Sản phẩm này thuộc subcategory "Phụ kiện"
     des: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic excepturi quibusdam odio deleniti reprehenderit facilis.",
   },
   {
@@ -227,6 +241,7 @@ const newArrivalsData = [
     color: "Gray",
     badge: false,
     sale: false,
+    subcategory: "Phụ kiện", 
     des: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic excepturi quibusdam odio deleniti reprehenderit facilis.",
   },
   {
@@ -239,6 +254,7 @@ const newArrivalsData = [
     color: "Mixed",
     badge: true,
     sale: false,
+    subcategory: "Đồ gia dụng", // Sản phẩm này thuộc subcategory "Đồ gia dụng"
     des: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic excepturi quibusdam odio deleniti reprehenderit facilis.",
   },
   {
@@ -251,6 +267,7 @@ const newArrivalsData = [
     color: "Black",
     badge: false,
     sale: false,
+    subcategory: "Phụ kiện", // Sản phẩm này thuộc subcategory "Phụ kiện"
     des: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic excepturi quibusdam odio deleniti reprehenderit facilis.",
   },
 ];
@@ -266,6 +283,5 @@ newArrivalsData.forEach(item => {
 
 // Xuất dữ liệu đã xử lý
 console.log(newArrivalsData);
-
 
 export default newArrivalsData;
