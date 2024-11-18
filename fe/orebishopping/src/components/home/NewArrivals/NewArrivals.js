@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Slider from "react-slick";
 import Heading from "../Products/Heading";
 import Product from "../Products/Product";
@@ -8,62 +8,84 @@ import SampleNextArrow from "./SampleNextArrow";
 import SamplePrevArrow from "./SamplePrevArrow";
 
 const NewArrivals = () => {
-  // Gộp tất cả sản phẩm vào đúng category lớn (không phân chia theo subcategory)
-  const categories = categoriesData.reduce((acc, category) => {
-    // Lặp qua từng sản phẩm và nhóm vào category lớn
-    const filteredProducts = newArrivalsData.filter(product => {
-      return category.subcategories.some(subcategory => subcategory.name === product.subcategory);
+  const [categories, setCategories] = useState({});
+  const sliderRefs = useRef([]);
+
+  useEffect(() => {
+    console.log("categoriesData", categoriesData); // Kiểm tra dữ liệu categoriesData
+    console.log("newArrivalsData", newArrivalsData); // Kiểm tra dữ liệu newArrivalsData
+
+    // Cập nhật categories từ newArrivalsData theo từng subcategory trong categoriesData
+    const updatedCategories = categoriesData.reduce((acc, category) => {
+      const filteredProducts = newArrivalsData.filter((product) =>
+        category.subcategories.some(
+          (subcategory) => subcategory.name === product.subcategory
+        )
+      );
+      
+      console.log("Filtered products for category", category.name, filteredProducts); // Debug sản phẩm theo từng category
+
+      if (filteredProducts.length > 0) {
+        acc[category.name] = filteredProducts;
+      }
+
+      return acc;
+    }, {});
+
+    setCategories(updatedCategories);
+  }, []);
+
+  useEffect(() => {
+    console.log("Categories after update:", categories); // Kiểm tra categories sau khi được cập nhật
+    sliderRefs.current.forEach((slider) => {
+      if (slider) {
+        slider.slickGoTo(0); // Đặt lại vị trí slider sau khi categories thay đổi
+      }
     });
+  }, [categories]);
 
-    // Nếu có sản phẩm, thêm vào category lớn
-    if (filteredProducts.length > 0) {
-      acc[category.name] = filteredProducts;
-    }
-
-    return acc;
-  }, {});
-
-  // Cài đặt cho slider sản phẩm
-  const productSliderSettings = {
+  const commonSliderSettings = {
     infinite: true,
     speed: 500,
-    slidesToShow: 4,
     slidesToScroll: 1,
     nextArrow: <SampleNextArrow />,
     prevArrow: <SamplePrevArrow />,
     responsive: [
       { breakpoint: 1025, settings: { slidesToShow: 3, slidesToScroll: 1 } },
-      { breakpoint: 769, settings: { slidesToShow: 2, slidesToScroll: 2 } },
+      { breakpoint: 769, settings: { slidesToShow: 2, slidesToScroll: 1 } },
       { breakpoint: 480, settings: { slidesToShow: 1, slidesToScroll: 1 } },
     ],
   };
 
-  // Cài đặt cho slider banner (chỉ 1 banner hiển thị, tự động chuyển sau 5s)
+  const productSliderSettings = {
+    ...commonSliderSettings,
+    slidesToShow: 4,
+  };
+
   const bannerSliderSettings = {
-    infinite: true,
-    speed: 500,
+    ...commonSliderSettings,
     slidesToShow: 1,
-    slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 5000,
-    nextArrow: <SampleNextArrow />,
-    prevArrow: <SamplePrevArrow />,
   };
 
   return (
     <div className="w-full pb-16">
-      {/* Lặp qua các danh mục lớn */}
-      {Object.keys(categories).map((category) => {
+      {Object.keys(categories).map((category, index) => {
         const categoryData = categoriesData.find((cat) => cat.name === category);
+        console.log("Rendering category:", category); // Debug tên category đang được render
 
         return (
           <div key={category} className="mb-8">
-            {/* Hiển thị banner của danh mục với Slider */}
             {categoryData && categoryData.listImg.length > 0 && (
               <div className="mb-4">
-                <Slider {...bannerSliderSettings}>
-                  {categoryData.listImg.map((img, index) => (
-                    <div key={index} className="px-2">
+                <Slider
+                  {...bannerSliderSettings}
+                  key={`banner-${index}`}
+                  ref={(el) => (sliderRefs.current[index] = el)}
+                >
+                  {categoryData.listImg.map((img, imgIndex) => (
+                    <div key={imgIndex} className="px-2">
                       <img src={img} alt={category} className="w-full h-auto" />
                     </div>
                   ))}
@@ -71,23 +93,25 @@ const NewArrivals = () => {
               </div>
             )}
 
-            {/* Hiển thị tiêu đề của danh mục */}
             <Heading heading={category} />
 
-            {/* Hiển thị các sản phẩm trong danh mục */}
-            <Slider {...productSliderSettings}>
+            {/* Debug thông tin sản phẩm trong category */}
+            <Slider
+              {...productSliderSettings}
+              key={`product-slider-${category}`}
+              ref={(el) => (sliderRefs.current[index + categoriesData.length] = el)}
+            >
               {categories[category].map((product) => (
-                <div className="px-2" key={product._id}>
+                <div key={product._id} className="px-2">
                   <Product
                     _id={product._id}
                     img={product.img}
                     productName={product.productName}
                     originalPrice={product.originalPrice}
-                    discountedPrice={product.discountedPrice} 
-                    discountPercentage={product.discountPercentage} 
-                    color={product.color}
-                    badge={product.badge}
-                    des={product.des}
+                    discountedPrice={product.discountedPrice}
+                    discountPercentage={product.discountPercentage}
+                    badge={product.discountPercentage > 0 ? "Sale" : null}
+                    unit={product.unit}
                   />
                 </div>
               ))}

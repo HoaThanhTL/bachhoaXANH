@@ -15,3 +15,4 @@ root.render(
     </PersistGate>
   </Provider>
 );
+console.log("Initial Redux Store:", store.getState());

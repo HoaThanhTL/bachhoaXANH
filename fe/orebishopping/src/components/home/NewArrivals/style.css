@@ -1,0 +1,16 @@
+/* Đảm bảo slider container hiển thị ngang */
+.slider-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 1rem;
+  }
+  
+  .slick-slide {
+    display: inline-block;
+    padding: 0 10px;
+  }
+  
+  .slick-track {
+    display: flex;
+  }
+  

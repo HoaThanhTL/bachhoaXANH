@@ -2,39 +2,91 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../../redux/orebiSlice";
 
+const formatCurrency = (price) =>
+  price.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
+
 const ProductInfo = ({ productInfo }) => {
   const dispatch = useDispatch();
+  const {
+    productName = "Tên sản phẩm không khả dụng",
+    originalPrice = 0,
+    discountedPrice = 0,
+    discountPercentage = 0,
+    subcategory = "Không có",
+    unit = "Không xác định",
+    img = "",
+    productDetails = {},
+  } = productInfo || {};
+
+  const {
+    description = "Không có mô tả chi tiết",
+    type = "Không xác định",
+    manufactureDate = "Không khả dụng",
+    expiryDate = "Không khả dụng",
+  } = productDetails;
+
   return (
-    <div className="flex flex-col gap-5">
-      <h2 className="text-4xl font-semibold">{productInfo.productName}</h2>
-      <p className="text-xl font-semibold">${productInfo.price}</p>
-      <p className="text-base text-gray-600">{productInfo.des}</p>
-      <p className="text-sm">Be the first to leave a review.</p>
-      <p className="font-medium text-lg">
-        <span className="font-normal">Colors:</span> {productInfo.color}
-      </p>
+    <div className="flex flex-col gap-5 p-5 border rounded-md shadow-md bg-white">
+      {/* Tên sản phẩm */}
+      <h2 className="text-4xl font-semibold text-gray-800">{productName}</h2>
+
+      {/* Giá sản phẩm */}
+      <div className="text-xl font-medium text-gray-700">
+        <span className="line-through text-gray-500 mr-3">
+          {originalPrice > 0 ? formatCurrency(originalPrice) : "Liên hệ"}
+        </span>
+        <span className="text-red-600 font-bold">
+          {discountedPrice > 0 ? formatCurrency(discountedPrice) : "Liên hệ"}
+        </span>
+        {discountPercentage > 0 && (
+          <span className="ml-2 text-sm text-green-600">
+            -{discountPercentage}%
+          </span>
+        )}
+      </div>
+
+      {/* Mô tả sản phẩm */}
+      <p className="text-base text-gray-600">{description}</p>
+
+      {/* Thông tin chi tiết sản phẩm */}
+      <div className="text-sm text-gray-600">
+        <p>
+          <span className="font-medium">Loại hàng:</span> {type}
+        </p>
+        <p>
+          <span className="font-medium">Ngày sản xuất:</span> {manufactureDate}
+        </p>
+        <p>
+          <span className="font-medium">Ngày hết hạn:</span> {expiryDate}
+        </p>
+        <p>
+          <span className="font-medium">Danh mục phụ:</span> {subcategory}
+        </p>
+        <p>
+          <span className="font-medium">Đơn vị:</span> {unit}
+        </p>
+      </div>
+
+      {/* Hình ảnh sản phẩm */}
+      {img && <img src={img} alt={productName} className="rounded-md" />}
+
+      {/* Nút thêm vào giỏ hàng */}
       <button
         onClick={() =>
           dispatch(
             addToCart({
-              _id: productInfo.id,
-              name: productInfo.productName,
+              _id: productInfo?._id,
+              name: productInfo?.productName,
               quantity: 1,
-              image: productInfo.img,
-              badge: productInfo.badge,
-              price: productInfo.price,
-              colors: productInfo.color,
+              image: img,
+              price: discountedPrice,
             })
           )
         }
-        className="w-full py-4 bg-primeColor hover:bg-black duration-300 text-white text-lg font-titleFont"
+        className="w-full py-4 bg-primeColor hover:bg-black duration-300 text-white text-lg font-titleFont rounded-md"
       >
-        Add to Cart
+        Thêm vào giỏ hàng
       </button>
-      <p className="font-normal text-sm">
-        <span className="text-base font-medium"> Categories:</span> Spring
-        collection, Streetwear, Women Tags: featured SKU: N/A
-      </p>
     </div>
   );
 };
