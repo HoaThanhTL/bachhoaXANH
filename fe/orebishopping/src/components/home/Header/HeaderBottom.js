@@ -8,11 +8,11 @@ import Category from "../../pageProps/shopPage/shopBy/Category";
 import categoriesData from "../data/categoriesData"; // Import categoriesData
 import { paginationItems } from "../../../constants";
 import { motion } from "framer-motion";
-
+import "./HeaderBottom"
 
 const HeaderBottom = () => {
   const location = useLocation(); // Get current location (URL)
-  const products = useSelector((state) => state.orebiReducer.products);
+  const products = useSelector((state) => state.levenstReducer.products);
   const [showUser, setShowUser] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -32,12 +32,12 @@ const HeaderBottom = () => {
     setFilteredProducts(filtered);
   }, [searchQuery]);
 
-  // Check if current location is "Home", and show category by default on home page
+
   useEffect(() => {
     if (location.pathname === "/") {
-      setShowCategory(true); // Show category when on Home page
+      setShowCategory(true);
     } else {
-      setShowCategory(false); // Hide category on other pages
+      setShowCategory(false); 
     }
   }, [location.pathname]); // Runs every time the location changes
 
@@ -49,7 +49,7 @@ const HeaderBottom = () => {
           {/* Category Toggle */}
           <div className="flex flex-col h-14 w-[20%] cursor-pointer items-center gap-2 text-primeColor relative">
             <HiOutlineMenuAlt4 className="w-10 h-10" onClick={() => setShowCategory(!showCategory)} />
-            <p className="text-[14px] font-normal">Shop by Category</p>
+            <p className="text-[14px] font-normal">DANH MỤC SẢN PHẨM</p>
 
             {/* Category Dropdown */}
             {(showCategory || location.pathname === "/") && (
@@ -58,7 +58,7 @@ const HeaderBottom = () => {
                 animate={{ y: 0, opacity: 1 }}   // End in the normal position
                 exit={{ y: -30, opacity: 0 }}    // When hiding, go up again
                 transition={{ duration: 0.3 }}   // Make the transition fast and smooth
-                className="absolute top-20 z-50 bg-primeColor w-full max-w-[100%] text-[#767676] h-auto p-4 pb-6"
+                className="absolute top-20 z-50 bg-white w-full max-w-[100%] text-[#767676] h-auto p-4 pb-6"
               >
                 <Category categories={categoriesData} />
               </motion.div>

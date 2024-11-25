@@ -5,7 +5,7 @@ import {
   deleteItem,
   drecreaseQuantity,
   increaseQuantity,
-} from "../../redux/orebiSlice";
+} from "../../redux/levenstSlice";
 
 const ItemCard = ({ item }) => {
   const dispatch = useDispatch();

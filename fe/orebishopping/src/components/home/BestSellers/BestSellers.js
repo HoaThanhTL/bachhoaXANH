@@ -1,98 +1,60 @@
-// import React from "react";
-// import Heading from "../Products/Heading";
-// import Product from "../Products/Product";
-// import {
-//   bestSellerOne,
-//   bestSellerTwo,
-//   bestSellerThree,
-//   bestSellerFour,
-// } from "../../../assets/images/index";
-
-// const BestSellers = () => {
-//   return (
-//     <div className="w-full pb-20">
-//       <Heading heading="Our Bestsellers" />
-//       <div className="w-full grid grid-cols-1 md:grid-cols-2 lgl:grid-cols-3 xl:grid-cols-4 gap-10">
-//         <Product
-//           _id="1011"
-//           img={bestSellerOne}
-//           productName="Flower Base"
-//           price="35.00"
-//           color="Blank and White"
-//           badge={true}
-//           des="Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic excepturi quibusdam odio deleniti reprehenderit facilis."
-//         />
-//         <Product
-//           _id="1012"
-//           img={bestSellerTwo}
-//           productName="New Backpack"
-//           price="180.00"
-//           color="Gray"
-//           badge={false}
-//           des="Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic excepturi quibusdam odio deleniti reprehenderit facilis."
-//         />
-//         <Product
-//           _id="1013"
-//           img={bestSellerThree}
-//           productName="Household materials"
-//           price="25.00"
-//           color="Mixed"
-//           badge={true}
-//           des="Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic excepturi quibusdam odio deleniti reprehenderit facilis."
-//         />
-//         <Product
-//           _id="1014"
-//           img={bestSellerFour}
-//           productName="Travel Bag"
-//           price="220.00"
-//           color="Black"
-//           badge={false}
-//           des="Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic excepturi quibusdam odio deleniti reprehenderit facilis."
-//         />
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default BestSellers;
 import React from "react";
+import { useParams } from "react-router-dom";
 import Heading from "../Products/Heading";
 import Product from "../Products/Product";
 import newArrivalsData from "../data/newArrivalsData";
+import categoriesData from "../data/categoriesData";
 
-const BestSellers = () => {
+const CategoryDetailPage = () => {
+  const { categoryName } = useParams(); // Lấy category từ URL
+
+  // Tìm category dữ liệu dựa trên categoryName
+  const categoryData = categoriesData.find((category) => category.name === categoryName);
+
+  if (!categoryData) {
+    return <div>Category not found</div>;
+  }
+
   return (
     <div className="w-full pb-20">
-      <Heading heading="Our Bestsellers" />
-      <div className="w-full grid grid-cols-1 md:grid-cols-2 lgl:grid-cols-3 xl:grid-cols-4 gap-10">
-        {newArrivalsData.map((item) => {
-          const discountedPrice =
-            item.discountPercentage > 0
-              ? (item.originalPrice * (1 - item.discountPercentage / 100)).toFixed(2)
-              : item.originalPrice.toFixed(2);
+      <Heading heading={`Chi tiết sản phẩm: ${categoryName}`} />
 
-          // Check if the item is on sale
-          const isOnSale = item.sale;
+      {/* Hiển thị sản phẩm theo subcategories */}
+      {categoryData.subcategories.map((subcategory) => (
+        <div key={subcategory.name} className="mb-10">
+          <Heading heading={subcategory.name} />
 
-          return (
-            <Product
-              key={item._id}
-              img={item.img}
-              productName={item.productName}
-              // Only display prices if the item is on sale
-              originalPrice={isOnSale ? item.originalPrice.toFixed(2) : null} 
-              discountPercentage={isOnSale ? item.discountPercentage : null} 
-              discountedPrice={isOnSale ? discountedPrice : null} 
-              color={item.color}
-              badge={item.badge}
-              sale={isOnSale} // Pass sale status to Product component
-              des={item.des}
-            />
-          );
-        })}
-      </div>
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+            {newArrivalsData
+              .filter((product) => product.subcategory === subcategory.name)
+              .map((item) => {
+                const discountedPrice =
+                  item.discountPercentage > 0
+                    ? (item.originalPrice * (1 - item.discountPercentage / 100)).toFixed(2)
+                    : item.originalPrice.toFixed(2);
+
+                const isOnSale = item.sale;
+
+                return (
+                  <Product
+                    key={item._id}
+                    img={item.img}
+                    productName={item.productName}
+                    originalPrice={isOnSale ? item.originalPrice.toFixed(2) : null}
+                    discountPercentage={isOnSale ? item.discountPercentage : null}
+                    discountedPrice={isOnSale ? discountedPrice : null}
+                    color={item.color}
+                    badge={item.badge}
+                    sale={isOnSale}
+                    des={item.des}
+                  />
+                );
+              })}
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
 
-export default BestSellers;
+export default CategoryDetailPage;

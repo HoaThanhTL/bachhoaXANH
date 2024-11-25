@@ -1,77 +1,92 @@
+/* Mặc định cho .product-card */
 .product-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 1px solid #e5e5e5;
-    border-radius: 8px;
-    background: white;
-  }
-  
-  .product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .product-card img {
-    transition: transform 0.3s ease;
-    border-radius: 8px;
-  }
-  
-  .product-card:hover img {
-    transform: scale(1.05);
-  }
-  
-  button {
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    border: none;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    transform: scale(1.05);
-  }
-  
-  input {
-    text-align: center;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 40px;
-  }
-  
-  .bg-green-500 {
-    background-color: #10b981;
-  }
-  
-  .bg-green-600:hover {
-    background-color: #059669;
-  }
-  
-  .bg-red-500 {
-    background-color: #ef4444;
-  }
-  
-  .bg-red-500:hover {
-    background-color: #dc2626;
-  }
-  
-  .text-gray-600 {
-    color: #4b5563;
-  }
-  
-  .text-gray-700 {
-    color: #374151;
-  }
-  
-  .text-red-600 {
-    color: #dc2626;
-  }
-  
-  .text-white {
-    color: white;
-  }
-  
-  .rounded {
-    border-radius: 4px;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #fff;
+  border-radius: 0px;
+  box-shadow: 0 4px 6px rgba(117, 223, 186, 0.1);
+}
+
+/* Container giá sản phẩm */
+.product-card .price-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 70px; /* Giới hạn chiều cao của phần giá */
+  padding-bottom: 10px;
+}
+
+/* Phần giá giảm */
+.product-card .price-discounted {
+  font-size: 18px;
+  color: #000000;
+  font-weight: bold;
+}
+
+/* Phần giá gốc nếu có */
+.product-card .price-original {
+  font-size: 16px;
+  color: #888;
+  text-decoration: line-through;
+}
+
+.product-card .discount-tag {
+  background-color: #e60000;
+  color: #fff;
+  padding: 5px;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+/* Nút "Mua" */
+.product-card .buy-button {
+  background-color: rgb(228, 245, 231); /* Màu nền */
+  color: rgb(0 136 72); /* Màu chữ */
+  font-size: 16px;
+  font-weight: bold;
+  padding: 12px;
+  text-align: center;
+  width: 100%;
+  border: none;
+  border-radius: 0; /* Không có viền ngoài */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Các nút tăng giảm số lượng + và - */
+.product-card .quantity-btn {
+  background-color: rgb(228, 245, 231); /* Màu nền */
+  color: rgb(0 136 72); /* Màu chữ */
+  width: 40px; /* Kích thước nút */
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 0; /* Đảm bảo nút vuông */
+}
+
+/* Input số lượng */
+.product-card .quantity-input {
+  width: 60px;
+  text-align: center;
+  font-size: 16px;
+  border: 1px solid rgb(200 200 200);
+  border-radius: 0; /* Đảm bảo input vuông */
+  padding: 10px;
+  margin: 0 5px;
+  background-color: rgb(255 255 255);
+}
+
+/* Flex container cho số lượng */
+.product-card .quantity-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 0;
+}

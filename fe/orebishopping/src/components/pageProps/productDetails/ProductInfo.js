@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../../../redux/orebiSlice";
+import { addToCart } from "../../../redux/levenstSlice";
 
 const formatCurrency = (price) =>
   price.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
@@ -19,18 +19,16 @@ const ProductInfo = ({ productInfo }) => {
   } = productInfo || {};
 
   const {
-    description = "Không có mô tả chi tiết",
-    type = "Không xác định",
-    manufactureDate = "Không khả dụng",
-    expiryDate = "Không khả dụng",
+    type = "Hàng tươi sống",
+    description = "Sản phẩm tươi sống chất lượng cao.",
+    manufactureDate = "2023-07-15",
+    expiryDate = "2024-01-15",
   } = productDetails;
 
   return (
     <div className="flex flex-col gap-5 p-5 border rounded-md shadow-md bg-white">
-      {/* Tên sản phẩm */}
       <h2 className="text-4xl font-semibold text-gray-800">{productName}</h2>
 
-      {/* Giá sản phẩm */}
       <div className="text-xl font-medium text-gray-700">
         <span className="line-through text-gray-500 mr-3">
           {originalPrice > 0 ? formatCurrency(originalPrice) : "Liên hệ"}
@@ -45,10 +43,8 @@ const ProductInfo = ({ productInfo }) => {
         )}
       </div>
 
-      {/* Mô tả sản phẩm */}
       <p className="text-base text-gray-600">{description}</p>
 
-      {/* Thông tin chi tiết sản phẩm */}
       <div className="text-sm text-gray-600">
         <p>
           <span className="font-medium">Loại hàng:</span> {type}
@@ -67,10 +63,8 @@ const ProductInfo = ({ productInfo }) => {
         </p>
       </div>
 
-      {/* Hình ảnh sản phẩm */}
-      {img && <img src={img} alt={productName} className="rounded-md" />}
+      {/* {img && <img src={img} alt={productName} className="rounded-md" />} */}
 
-      {/* Nút thêm vào giỏ hàng */}
       <button
         onClick={() =>
           dispatch(

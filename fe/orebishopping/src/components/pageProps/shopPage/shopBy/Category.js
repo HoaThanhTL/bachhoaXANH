@@ -19,7 +19,7 @@ const Category = () => {
   return (
     <div className="w-full">
       {/* NavTitle component */}
-      <NavTitle title="Shop by Category" icons={false} />
+      <NavTitle title="KHUYẾN MÃI SỐC" icons={false} />
 
       <div>
         <ul className="flex flex-col gap-4 text-sm lg:text-base text-[#767676]">

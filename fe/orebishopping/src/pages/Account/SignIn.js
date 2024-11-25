@@ -64,7 +64,7 @@ const SignIn = () => {
             </span>
             <p className="text-base text-gray-300">
               <span className="text-white font-semibold font-titleFont">
-                Bắt đầu nhanh với OREBI
+                Bắt đầu nhanh với levenst
               </span>
               <br />
               Khám phá những trải nghiệm tuyệt vời cùng dịch vụ của chúng tôi.
@@ -76,7 +76,7 @@ const SignIn = () => {
             </span>
             <p className="text-base text-gray-300">
               <span className="text-white font-semibold font-titleFont">
-                Truy cập mọi dịch vụ của OREBI
+                Truy cập mọi dịch vụ của levenst
               </span>
               <br />
               Dễ dàng quản lý tài khoản và trải nghiệm tối ưu nhất.
@@ -97,7 +97,7 @@ const SignIn = () => {
           <div className="flex items-center justify-between mt-10">
             <Link to="/">
               <p className="text-sm font-titleFont font-semibold text-gray-300 hover:text-white cursor-pointer duration-300">
-                © OREBI
+                © levenst
               </p>
             </Link>
             <p className="text-sm font-titleFont font-semibold text-gray-300 hover:text-white cursor-pointer duration-300">

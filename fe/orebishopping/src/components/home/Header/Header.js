@@ -8,7 +8,6 @@ import Image from "../../designLayouts/Image";
 import { navBarList } from "../../../constants";
 import Flex from "../../designLayouts/Flex";
 
-
 const Header = () => {
   const [showMenu, setShowMenu] = useState(true);
   const [sidenav, setSidenav] = useState(false);
@@ -63,14 +62,14 @@ const Header = () => {
               className="inline-block md:hidden cursor-pointer w-8 h-6 absolute top-6 right-4"
             />
             {sidenav && (
-              <div className="fixed top-0 left-0 w-full h-screen bg-black text-gray-200 bg-opacity-80 z-50">
+              <div className="fixed top-0 left-0 w-full h-screen bg-white text-gray-200  z-50">
                 <motion.div
                   initial={{ x: -300, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ duration: 0.5 }}
-                  className="w-[80%] h-full relative"
+                  className="w-[100%] h-full relative"
                 >
-                  <div className="w-full h-full bg-primeColor p-6">
+                  <div className="w-full h-full p-6">
                     <img
                       className="w-28 mb-6"
                       src={logoLight}
@@ -93,13 +92,14 @@ const Header = () => {
                       ))}
                     </ul>
                     <div className="mt-4">
-                      <h1
-                        onClick={() => setCategory(!category)}
-                        className="flex justify-between text-base cursor-pointer items-center font-titleFont mb-2"
-                      >
-                        Shop by Category{" "}
-                        <span className="text-lg">{category ? "-" : "+"}</span>
-                      </h1>
+                    <h1
+                      onClick={() => setCategory(!category)}
+                      className="flex justify-between text-base cursor-pointer items-center font-titleFont mb-2 bg-white p-2 rounded-md"
+                    >
+                      
+                      <span className="text-lg">{category ? "-" : "+"}</span>
+                    </h1>
+
                       {category && (
                         <motion.ul
                           initial={{ y: 15, opacity: 0 }}

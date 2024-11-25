@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../../../redux/orebiSlice";
+import { addToCart } from "../../../redux/levenstSlice";
+import "./Product.css";
+
+// Hàm format giá
+const formatCurrency = (amount) => {
+  return new Intl.NumberFormat("vi-VN").format(amount);
+};
 
 const Product = (props) => {
   const dispatch = useDispatch();
@@ -50,25 +56,28 @@ const Product = (props) => {
   };
 
   return (
-    <div className="product-card border p-4 rounded-lg bg-white flex flex-col justify-between">
+    <div className="product-card">
       {/* Hình ảnh sản phẩm */}
       <div className="relative mb-4 cursor-pointer" onClick={handleProductDetails}>
         <img src={props.img} alt={props.productName} className="w-full h-auto rounded-lg" />
       </div>
 
       {/* Tên sản phẩm */}
-      <p className="text-lg font-medium text-gray-800 mb-2">{props.productName}</p>
+      <p className="text-lg font-medium text-gray-800 pl-2 mb-2">{props.productName}</p>
 
       {/* Giá sản phẩm */}
-      <div className="mb-4">
-        <p className="text-xl font-bold text-red-600">
-          {props.discountedPrice}đ
+      <div className="mb-4 price-container pl-2">
+        <p className="text-xl font-bold price-discounted">
+          {formatCurrency(props.discountedPrice)}đ
           {props.unit && <span className="text-sm text-gray-600">/{props.unit}</span>}
         </p>
+
         {props.discountPercentage > 0 && (
           <div className="flex items-center gap-2">
-            <p className="text-sm text-gray-500 line-through">{props.originalPrice}đ</p>
-            <p className="text-sm text-white bg-red-500 px-2 py-1 rounded">
+            <p className="text-sm price-original">
+              {formatCurrency(props.originalPrice)}đ
+            </p>
+            <p className="discount-tag">
               -{props.discountPercentage}%
             </p>
           </div>
@@ -76,40 +85,42 @@ const Product = (props) => {
       </div>
 
       {/* Nút Mua hoặc Thay đổi số lượng */}
-      <div className="mt-auto">
+      <div className="quantity-container">
         {isBuying ? (
-          <div className="flex items-center justify-between gap-2">
-            {/* Chọn số lượng */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleDecreaseQuantity}
-                className="w-8 h-8 bg-gray-200 text-gray-800 font-bold rounded"
-              >
-                -
-              </button>
-              <input
-                type="number"
-                value={quantity}
-                onChange={handleQuantityChange}
-                className="w-12 text-center border border-gray-300 rounded"
-              />
-              <button
-                onClick={handleIncreaseQuantity}
-                className="w-8 h-8 bg-gray-200 text-gray-800 font-bold rounded"
-              >
-                +
-              </button>
-            </div>
-          </div>
+          <>
+            {/* Nút giảm số lượng */}
+            <button
+              onClick={handleDecreaseQuantity}
+              className="quantity-btn"
+            >
+              -
+            </button>
+
+            {/* Input số lượng */}
+            <input
+              type="number"
+              value={quantity}
+              onChange={handleQuantityChange}
+              className="quantity-input"
+            />
+
+            {/* Nút tăng số lượng */}
+            <button
+              onClick={handleIncreaseQuantity}
+              className="quantity-btn"
+            >
+              +
+            </button>
+          </>
         ) : (
           <button
             onClick={() => {
               setIsBuying(true);
-              handleAddToCart(quantity); // Thêm sản phẩm vào giỏ ngay lập tức
+              handleAddToCart(quantity);
             }}
-            className="w-full py-3 bg-green-500 text-white text-center font-bold text-lg rounded hover:bg-green-600"
+            className="buy-button"
           >
-            Mua
+            MUA
           </button>
         )}
       </div>

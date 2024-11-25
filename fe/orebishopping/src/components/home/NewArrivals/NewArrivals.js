@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Slider from "react-slick";
 import Heading from "../Products/Heading";
 import Product from "../Products/Product";
@@ -9,21 +10,14 @@ import SamplePrevArrow from "./SamplePrevArrow";
 
 const NewArrivals = () => {
   const [categories, setCategories] = useState({});
-  const sliderRefs = useRef([]);
 
   useEffect(() => {
-    console.log("categoriesData", categoriesData); // Kiểm tra dữ liệu categoriesData
-    console.log("newArrivalsData", newArrivalsData); // Kiểm tra dữ liệu newArrivalsData
-
-    // Cập nhật categories từ newArrivalsData theo từng subcategory trong categoriesData
     const updatedCategories = categoriesData.reduce((acc, category) => {
       const filteredProducts = newArrivalsData.filter((product) =>
         category.subcategories.some(
           (subcategory) => subcategory.name === product.subcategory
         )
       );
-      
-      console.log("Filtered products for category", category.name, filteredProducts); // Debug sản phẩm theo từng category
 
       if (filteredProducts.length > 0) {
         acc[category.name] = filteredProducts;
@@ -34,15 +28,6 @@ const NewArrivals = () => {
 
     setCategories(updatedCategories);
   }, []);
-
-  useEffect(() => {
-    console.log("Categories after update:", categories); // Kiểm tra categories sau khi được cập nhật
-    sliderRefs.current.forEach((slider) => {
-      if (slider) {
-        slider.slickGoTo(0); // Đặt lại vị trí slider sau khi categories thay đổi
-      }
-    });
-  }, [categories]);
 
   const commonSliderSettings = {
     infinite: true,
@@ -73,7 +58,6 @@ const NewArrivals = () => {
     <div className="w-full pb-16">
       {Object.keys(categories).map((category, index) => {
         const categoryData = categoriesData.find((cat) => cat.name === category);
-        console.log("Rendering category:", category); // Debug tên category đang được render
 
         return (
           <div key={category} className="mb-8">
@@ -82,7 +66,6 @@ const NewArrivals = () => {
                 <Slider
                   {...bannerSliderSettings}
                   key={`banner-${index}`}
-                  ref={(el) => (sliderRefs.current[index] = el)}
                 >
                   {categoryData.listImg.map((img, imgIndex) => (
                     <div key={imgIndex} className="px-2">
@@ -95,11 +78,10 @@ const NewArrivals = () => {
 
             <Heading heading={category} />
 
-            {/* Debug thông tin sản phẩm trong category */}
+            {/* Hiển thị sản phẩm */}
             <Slider
               {...productSliderSettings}
               key={`product-slider-${category}`}
-              ref={(el) => (sliderRefs.current[index + categoriesData.length] = el)}
             >
               {categories[category].map((product) => (
                 <div key={product._id} className="px-2">
@@ -116,6 +98,14 @@ const NewArrivals = () => {
                 </div>
               ))}
             </Slider>
+
+            {/* Thêm nút "Xem thêm" */}
+            <Link
+              to={`/category/${category}`} // Chuyển hướng tới trang category
+              className="mt-4 text-blue-500 hover:underline"
+            >
+              Xem thêm
+            </Link>
           </div>
         );
       })}
