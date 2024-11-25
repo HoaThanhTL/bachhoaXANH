@@ -1,0 +1,140 @@
+@use "sass:map";
+@use "../style/pages/_theme" as theme; // Giả sử theme-colors được định nghĩa trong file theme
+//D:\TLCN_BachHoaXANH\bachhoaXANH\fe\bachhoaxanh\src\style\pages\_theme.scss
+// Header top section
+.header__top {
+    background: #f5f5f5; // Giữ nguyên màu nền mặc định, có thể thay bằng màu từ theme nếu cần
+}
+
+// Left header section with menu items
+.header__top_left {
+    ul {
+        display: flex;
+        column-gap: 20px;
+        list-style: none;
+        padding: 10px 0 13px;
+        align-items: center;
+
+        li {
+            font-size: 14px;
+            color: map.get($theme-colors, "normal");  // Sử dụng màu từ theme-colors
+            display: flex;
+            align-items: center;
+            column-gap: 2px;
+        }
+        li:first-child {
+            position: relative;
+
+            &:after {
+                position: absolute;
+                right: -10px;
+                top: 1px;
+                height: 20px;
+                width: 1px;
+                background: map.get($theme-colors, "normal-text");  // Màu đường chia cách từ theme
+                opacity: 0.2;
+                content: "";
+            }
+        }
+    }
+}
+
+// Right header section with user/cart icons
+.header__top_right {
+    display: flex;
+    justify-content: flex-end;
+    ul {
+        display: flex;
+        column-gap: 5px;
+        list-style: none;
+        padding: 10px 0 13px;
+        
+        a {
+            font-size: 14px;
+            display: inline-block;
+            color: map.get($theme-colors, "normal-text");  // Màu chữ chính từ theme
+        }
+        
+        li:last-child {
+            cursor: pointer;
+            margin-left: 10px;
+            span {
+                font-size: 14px;
+                margin-left: 2px;
+            }
+        }
+    }
+}
+
+// Logo section
+.header__logo {
+    padding: 15px 0;
+}
+
+// Menu section
+.header__menu {
+    padding: 24px;
+
+    ul {
+        display: flex;
+        justify-content: space-between;
+        
+        li {
+            list-style: none;
+            a {
+                text-decoration: none;
+                font-size: 14px;
+                color: map.get($theme-colors, "bold-text");  // Màu chữ đậm từ theme
+                text-transform: uppercase;
+                font-weight: bold;
+                letter-spacing: 2px;
+                transform: all 0.3s;
+                padding: 5px 0 ;
+                display: block;
+            }
+        }
+        
+        .active a {
+            color: map.get($theme-colors, "main");  // Màu khi active từ theme
+        }
+    }
+}
+
+// Cart section
+.header__cart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px 0;
+
+    ul {
+        display: flex;
+        margin-right: 25px;
+
+        li {
+            list-style: none;
+            position: relative;
+            margin-left: 20px;
+
+            svg {
+                font-size: 25px;
+                color: map.get($theme-colors, "normal-text");  // Màu của icon từ theme
+            }
+
+            span {
+                color: white;
+                background: map.get($theme-colors, 'main');  // Màu nền thông báo từ theme
+                position: absolute;
+                height: 20px;
+                width: 20px;
+                border-radius: 50%;
+                display: inline-block;
+                text-align: center;
+                font-size: 13px;
+                font-weight: 500;
+                left: 20px;
+                top: -2px;
+            }
+        }
+    }
+}

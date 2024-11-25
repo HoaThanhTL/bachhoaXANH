@@ -1,0 +1,38 @@
+/* src/components/user/profile/EditProfile/EditProfile.css */
+.edit-profile {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .profile-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .profile-field label {
+    font-weight: bold;
+  }
+  
+  .profile-field input, .profile-field select {
+    padding: 5px;
+    font-size: 16px;
+  }
+  
+  button {
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .edit-button {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .save-button {
+    background-color: #f1c40f;
+    color: white;
+  }
+  

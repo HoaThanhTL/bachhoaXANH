@@ -1,0 +1,23 @@
+/* src/components/user/profile/Sidebar/Sidebar.css */
+.sidebar-container {
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+  }
+  
+  .sidebar-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .sidebar-list li {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .sidebar-list li:hover {
+    background-color: #ddd;
+  }
+  

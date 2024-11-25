@@ -1,0 +1,17 @@
+/* src/components/user/profile/Profile.css */
+.profile-container {
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+  }
+  
+  .profile-sidebar {
+    width: 20%;
+    padding: 10px;
+  }
+  
+  .profile-content {
+    width: 80%;
+    padding: 20px;
+  }
+  

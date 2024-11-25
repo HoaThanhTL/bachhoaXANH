@@ -1,0 +1,103 @@
+/* src/components/user/history/OrderHistory/OrderHistory.css */
+
+/* Container cho Order History */
+.order-history-container {
+    margin-top: 20px;
+  }
+  
+  .order-history-container h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Bảng Lịch sử Đơn hàng */
+  .order-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+  }
+  
+  .order-history-table th,
+  .order-history-table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  .order-history-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+  
+  .order-history-table tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .order-history-table td button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  .order-history-table td button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Bảng Chi tiết Đơn hàng */
+  .order-details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .order-details-table th,
+  .order-details-table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  .order-details-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+  
+  .order-details-table tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .order-details {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+  }
+  
+  .btn-close {
+    background-color: #dc3545;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 10px;
+  }
+  
+  .btn-close:hover {
+    background-color: #c82333;
+  }
+  
+  .btn-details {
+    background-color: #28a745;
+  }
+  
+  .btn-details:hover {
+    background-color: #218838;
+  }
+  
