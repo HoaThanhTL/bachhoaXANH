@@ -61,7 +61,10 @@ public class ProductController {
         dto.setDiscountedPrice(product.getDiscountedPrice());
         dto.setDiscountPercentage(product.getDiscountPercentage());
         dto.setUnit(product.getUnit());
-        dto.setProductDetailId(product.getProductDetail().getProductDetailId());
+        if (product.getProductDetail() != null) {
+            dto.setProductDetailId(product.getProductDetail().getProductDetailId());
+            dto.setDescription(product.getProductDetail().getDescription());
+        }
         return dto;
     }
 

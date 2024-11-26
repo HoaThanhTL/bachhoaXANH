@@ -1,19 +1,27 @@
 package com.orebi.entity;
 
-import javax.persistence.*;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "categories")
+@Table(name = "category")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
+
     private String name;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SubCategory> subcategories;
+    private List<SubCategory> subcategories = new ArrayList<>();
 
     // Getters and Setters
     public Long getCategoryId() {
@@ -33,10 +41,21 @@ public class Category {
     }
 
     public List<SubCategory> getSubcategories() {
-        return new ArrayList<>(subcategories);
+        return subcategories;
     }
 
     public void setSubcategories(List<SubCategory> subcategories) {
         this.subcategories = subcategories;
+    }
+
+    // Helper methods
+    public void addSubCategory(SubCategory subCategory) {
+        subcategories.add(subCategory);
+        subCategory.setCategory(this);
+    }
+
+    public void removeSubCategory(SubCategory subCategory) {
+        subcategories.remove(subCategory);
+        subCategory.setCategory(null);
     }
 }

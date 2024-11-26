@@ -9,6 +9,7 @@ public class ProductDTO {
     private double discountPercentage;
     private String unit;
     private Long productDetailId;
+    private String description;
 
     // Getters and Setters
     public Long getProductId() {
@@ -73,5 +74,13 @@ public class ProductDTO {
 
     public void setProductDetailId(Long productDetailId) {
         this.productDetailId = productDetailId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

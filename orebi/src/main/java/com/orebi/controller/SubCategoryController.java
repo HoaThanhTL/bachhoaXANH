@@ -54,7 +54,7 @@ public class SubCategoryController {
 
     private SubCategoryDTO convertToDTO(SubCategory subCategory) {
         SubCategoryDTO dto = new SubCategoryDTO();
-        dto.setSubcategoryId(subCategory.getSubcategoryId());
+        dto.setSubCategoryId(subCategory.getSubCategoryId());
         dto.setName(subCategory.getName());
         dto.setCategoryId(subCategory.getCategory().getCategoryId());
         return dto;
@@ -62,7 +62,7 @@ public class SubCategoryController {
 
     private SubCategory convertToEntity(SubCategoryDTO subCategoryDTO) {
         SubCategory subCategory = new SubCategory();
-        subCategory.setSubcategoryId(subCategoryDTO.getSubcategoryId());
+        subCategory.setSubCategoryId(subCategoryDTO.getSubCategoryId());
         subCategory.setName(subCategoryDTO.getName());
         // Set Category entity based on ID
         return subCategory;

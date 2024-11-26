@@ -1,13 +1,20 @@
 package com.orebi.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "subcategories")
+@Table(name = "sub_category")
 public class SubCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long subcategoryId;
+    private Long subCategoryId;
+
     private String name;
 
     @ManyToOne
@@ -15,18 +22,16 @@ public class SubCategory {
     private Category category;
 
     // Getters and Setters
-    public void setSubcategoryId(Long id) {
-        this.subcategoryId = id;
+    public Long getSubCategoryId() {
+        return subCategoryId;
     }
 
-
-    public Long getSubcategoryId() {
-        return this.subcategoryId;
+    public void setSubCategoryId(Long subCategoryId) {
+        this.subCategoryId = subCategoryId;
     }
-
 
     public String getName() {
-        return this.name;
+        return name;
     }
 
     public void setName(String name) {
@@ -34,11 +39,10 @@ public class SubCategory {
     }
 
     public Category getCategory() {
-        return this.category;
+        return category;
     }
 
     public void setCategory(Category category) {
         this.category = category;
     }
-
 }

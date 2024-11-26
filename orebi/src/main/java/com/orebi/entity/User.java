@@ -1,93 +1,95 @@
 package com.orebi.entity;
 
-import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
-    private String phone;
-    private String password;
+    
+    @Column(nullable = false)
     private String name;
-    private String otp;
+    
+    @Column(unique = true, nullable = false)
     private String email;
-    private boolean verified;
+    
+    @Column(nullable = false)
+    private String password;
+    
+    private String phone;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
+    // Constructor
+    public User() {
+    }
 
     // Getters and Setters
-    public void setUserId(Long id) {
-        this.userId = id;
-    }
-
-
     public Long getUserId() {
-        return this.userId;
+        return userId;
     }
 
-
-    public String getPhone() {
-        return this.phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getName() {
-        return this.name;
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getOtp() {
-        return this.otp;
-    }
-
-    public void setOtp(String otp) {
-        this.otp = otp;
-    }
-
     public String getEmail() {
-        return this.email;
+        return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public boolean isVerified() {
-        return this.verified;
+    public String getPassword() {
+        return password;
     }
 
-    public boolean getVerified() {
-        return this.verified;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public void setVerified(boolean verified) {
-        this.verified = verified;
+    public String getPhone() {
+        return phone;
     }
 
-    public Role getRole() {
-        return this.role;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
 }

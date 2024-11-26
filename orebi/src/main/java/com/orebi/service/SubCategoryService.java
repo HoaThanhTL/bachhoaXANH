@@ -1,12 +1,13 @@
 package com.orebi.service;
 
-import com.orebi.entity.SubCategory;
-import com.orebi.repository.SubCategoryRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import com.orebi.entity.SubCategory;
+import com.orebi.repository.SubCategoryRepository;
 
 @Service
 public class SubCategoryService {
@@ -27,7 +28,7 @@ public class SubCategoryService {
 
     public Optional<SubCategory> updateSubCategory(Long id, SubCategory subCategory) {
         if (subCategoryRepository.existsById(id)) {
-            subCategory.setSubcategoryId(id);
+            subCategory.setSubCategoryId(id);
             return Optional.of(subCategoryRepository.save(subCategory));
         }
         return Optional.empty();
