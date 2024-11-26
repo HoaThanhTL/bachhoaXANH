@@ -25,6 +25,14 @@ public class Product {
     @JoinColumn(name = "product_detail_id")
     private ProductDetail productDetail;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "sub_category_id")
+    private SubCategory subCategory;
+
     // Getters and Setters
     public void setProductId(Long id) {
         this.productId = id;
@@ -89,6 +97,22 @@ public class Product {
 
     public void setProductDetail(ProductDetail productDetail) {
         this.productDetail = productDetail;
+    }
+
+    public Category getCategory() {
+        return this.category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public SubCategory getSubCategory() {
+        return subCategory;
+    }
+
+    public void setSubCategory(SubCategory subCategory) {
+        this.subCategory = subCategory;
     }
 
 }

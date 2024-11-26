@@ -1,7 +1,6 @@
 package com.orebi.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +25,7 @@ public class OrderController {
 
     @GetMapping
     public List<OrderDTO> getAllOrders() {
-        return orderService.getAllOrders().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return orderService.getAllOrders();
     }
 
     @GetMapping("/{id}")

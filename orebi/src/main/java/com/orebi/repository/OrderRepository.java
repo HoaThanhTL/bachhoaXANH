@@ -1,8 +1,37 @@
 package com.orebi.repository;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.orebi.entity.Order;
+import com.orebi.entity.Product;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
+    @Query("SELECT SUM(o.totalPrice) FROM Order o")
+    Double sumTotalPrice();
+    
+    Long countByDateStartsWith(String date);
+    
+    @Query(value = """
+        SELECT c.name as category, COUNT(od.order_id) as orderCount, 
+        SUM(od.total_line_item) as totalSales 
+        FROM category c 
+        JOIN product p ON p.category_id = c.category_id 
+        JOIN order_detail od ON od.product_id = p.product_id 
+        GROUP BY c.category_id, c.name
+        ORDER BY totalSales DESC
+        """, nativeQuery = true)
+    List<Map<String, Object>> findCategorySales();
+    
+    @Query(value = """
+        SELECT p.* FROM product p 
+        JOIN order_detail od ON od.product_id = p.product_id 
+        GROUP BY p.product_id 
+        ORDER BY SUM(od.quantity) DESC 
+        LIMIT 10
+        """, nativeQuery = true)
+    List<Product> findTopSellingProducts();
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.orebi.dto.CategoryDTO;
+import com.orebi.dto.CategoryTreeDTO;
 import com.orebi.entity.Category;
 import com.orebi.service.CategoryService;
 
@@ -58,6 +59,11 @@ public class CategoryController {
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/tree")
+    public List<CategoryTreeDTO> getCategoryTree() {
+        return categoryService.getCategoryTree();
     }
 
     private CategoryDTO convertToDTO(Category category) {

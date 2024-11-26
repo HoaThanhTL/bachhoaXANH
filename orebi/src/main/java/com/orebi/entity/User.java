@@ -1,5 +1,6 @@
 package com.orebi.entity;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,6 +40,10 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    private String otp;
+    private LocalDateTime otpExpiry;
+    private boolean isOtpVerified;
 
     // Constructor
     public User() {
@@ -91,5 +96,29 @@ public class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
+    }
+
+    public LocalDateTime getOtpExpiry() {
+        return otpExpiry;
+    }
+
+    public void setOtpExpiry(LocalDateTime otpExpiry) {
+        this.otpExpiry = otpExpiry;
+    }
+
+    public boolean isOtpVerified() {
+        return isOtpVerified;
+    }
+
+    public void setOtpVerified(boolean otpVerified) {
+        isOtpVerified = otpVerified;
     }
 }
