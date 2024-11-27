@@ -1,1 +1,0 @@
-//render theo list category
