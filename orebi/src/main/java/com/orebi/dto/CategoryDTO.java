@@ -6,7 +6,7 @@ public class CategoryDTO {
     private Long categoryId;
     private String name;
     private String image;
-    private List<SubCategoryDTO> subcategories;
+    private List<SubCategoryDTO> subCategories;
 
     public Long getCategoryId() {
         return categoryId;
@@ -32,11 +32,11 @@ public class CategoryDTO {
         this.image = image;
     }
 
-    public List<SubCategoryDTO> getSubcategories() {
-        return subcategories;
+    public List<SubCategoryDTO> getSubCategories() {
+        return subCategories;
     }
 
-    public void setSubcategories(List<SubCategoryDTO> subcategories) {
-        this.subcategories = subcategories;
+    public void setSubCategories(List<SubCategoryDTO> subCategories) {
+        this.subCategories = subCategories;
     }
 } 
