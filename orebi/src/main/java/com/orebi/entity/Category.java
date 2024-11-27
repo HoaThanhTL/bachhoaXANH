@@ -20,6 +20,8 @@ public class Category {
 
     private String name;
 
+    private String image;
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubCategory> subcategories = new ArrayList<>();
 
@@ -46,6 +48,14 @@ public class Category {
 
     public void setSubcategories(List<SubCategory> subcategories) {
         this.subcategories = subcategories;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     // Helper methods

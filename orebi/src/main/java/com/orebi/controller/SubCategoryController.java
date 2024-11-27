@@ -1,14 +1,22 @@
 package com.orebi.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.orebi.dto.SubCategoryDTO;
 import com.orebi.entity.SubCategory;
 import com.orebi.service.SubCategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/subcategories")
@@ -34,16 +42,24 @@ public class SubCategoryController {
     @PostMapping
     public SubCategoryDTO createSubCategory(@RequestBody SubCategoryDTO subCategoryDTO) {
         SubCategory subCategory = convertToEntity(subCategoryDTO);
-        SubCategory createdSubCategory = subCategoryService.createSubCategory(subCategory);
+        SubCategory createdSubCategory = subCategoryService.createSubCategory(
+            subCategoryDTO.getCategoryId(),
+            subCategory
+        );
         return convertToDTO(createdSubCategory);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SubCategoryDTO> updateSubCategory(@PathVariable Long id, @RequestBody SubCategoryDTO subCategoryDTO) {
-        return subCategoryService.updateSubCategory(id, convertToEntity(subCategoryDTO))
-                .map(this::convertToDTO)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<SubCategoryDTO> updateSubCategory(
+            @PathVariable Long id, 
+            @RequestBody SubCategoryDTO subCategoryDTO) {
+        return subCategoryService.updateSubCategory(
+                subCategoryDTO.getCategoryId(),
+                id,
+                convertToEntity(subCategoryDTO))
+            .map(this::convertToDTO)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
@@ -57,6 +73,7 @@ public class SubCategoryController {
         dto.setSubCategoryId(subCategory.getSubCategoryId());
         dto.setName(subCategory.getName());
         dto.setCategoryId(subCategory.getCategory().getCategoryId());
+        dto.setCategoryName(subCategory.getCategory().getName()); 
         return dto;
     }
 
@@ -64,7 +81,6 @@ public class SubCategoryController {
         SubCategory subCategory = new SubCategory();
         subCategory.setSubCategoryId(subCategoryDTO.getSubCategoryId());
         subCategory.setName(subCategoryDTO.getName());
-        // Set Category entity based on ID
         return subCategory;
     }
 }

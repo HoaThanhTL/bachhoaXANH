@@ -1,12 +1,13 @@
 package com.orebi.service;
 
-import com.orebi.entity.ProductDetail;
-import com.orebi.repository.ProductDetailRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import com.orebi.entity.ProductDetail;
+import com.orebi.repository.ProductDetailRepository;
 
 @Service
 public class ProductDetailService {
@@ -35,5 +36,9 @@ public class ProductDetailService {
 
     public void deleteProductDetail(Long id) {
         productDetailRepository.deleteById(id);
+    }
+
+    public Optional<ProductDetail> getProductDetailByProductId(Long productId) {
+        return productDetailRepository.findByProductProductId(productId);
     }
 }

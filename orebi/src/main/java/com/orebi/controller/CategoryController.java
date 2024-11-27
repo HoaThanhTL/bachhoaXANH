@@ -70,6 +70,7 @@ public class CategoryController {
         CategoryDTO dto = new CategoryDTO();
         dto.setCategoryId(category.getCategoryId());
         dto.setName(category.getName());
+        dto.setImage(category.getImage());
         return dto;
     }
 
@@ -77,6 +78,7 @@ public class CategoryController {
         Category category = new Category();
         category.setCategoryId(categoryDTO.getCategoryId());
         category.setName(categoryDTO.getName());
+        category.setImage(categoryDTO.getImage());
         return category;
     }
 }
