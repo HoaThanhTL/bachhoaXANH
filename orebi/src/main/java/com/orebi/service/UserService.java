@@ -1,14 +1,17 @@
 package com.orebi.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,7 @@ import com.orebi.exception.ResourceNotFoundException;
 import com.orebi.repository.RoleRepository;
 import com.orebi.repository.UserRepository;
 import com.orebi.security.JwtTokenUtil;
+
 
 @Service
 public class UserService {
@@ -65,27 +69,90 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User registerUser(RegisterDTO registerDTO) {
+    public ResponseEntity<?> registerUser(RegisterDTO registerDTO) {
+        if (userRepository.findByEmail(registerDTO.getEmail()).isPresent()) {
+            return ResponseEntity.badRequest().body("Email already exists");
+        }
+
         User user = new User();
+        user.setName(registerDTO.getName());
         user.setEmail(registerDTO.getEmail());
         user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
+        user.setPhone(registerDTO.getPhone());
+        user.setOtpVerified(false);
 
-        return userRepository.save(user);
+        Role userRole = roleRepository.findByRoleName("ROLE_USER")
+            .orElseThrow(() -> new RuntimeException("Role not found"));
+        user.setRole(userRole);
+
+        String otp = generateOTP();
+        user.setOtp(otp);
+        user.setOtpExpiredAt(LocalDateTime.now().plusMinutes(5));
+
+        userRepository.save(user);
+
+        emailService.sendVerificationEmail(user.getEmail(), otp);
+
+        return ResponseEntity.ok("Please check your email to verify your account");
+    }
+
+    private String generateOTP() {
+        Random random = new Random();
+        int otp = 100000 + random.nextInt(900000);
+        return String.valueOf(otp);
     }
 
     public String loginUser(LoginDTO loginDTO) {
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword())
-        );
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return jwtTokenUtil.generateToken(userDetails);
+        try {
+            // Xác thực thông tin đăng nhập
+            Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                    loginDTO.getEmail(), 
+                    loginDTO.getPassword()
+                )
+            );
+
+            // Kiểm tra trạng thái xác thực email và OTP
+            User user = userRepository.findByEmail(loginDTO.getEmail())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+
+            if (!user.isOtpVerified()) {
+                throw new RuntimeException("Tài khoản chưa được xác thực. Vui lòng xác thực email và OTP trước khi đăng nhập.");
+            }
+
+            // Nếu xác thực thành công, tạo và trả về token
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            return jwtTokenUtil.generateToken(authentication);
+            
+        } catch (AuthenticationException e) {
+            throw new RuntimeException("Email hoặc mật khẩu không chính xác");
+        }
     }
 
     public void sendPasswordResetEmail(String email) {
         User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng với email này"));
+
         String resetToken = jwtTokenUtil.generatePasswordResetToken(user.getEmail());
-        emailService.sendPasswordResetEmail(user.getEmail(), resetToken);
+        String resetLink = "http://localhost:3000/reset-password/" + resetToken; // Thay đổi domain theo môi trường của bạn
+
+        // Gửi email chứa link reset password
+        emailService.sendPasswordResetEmail(user.getEmail(), resetLink);
+    }
+
+    public void resetPassword(String token, String newPassword) {
+        // Xác thực token
+        String email = jwtTokenUtil.validatePasswordResetToken(token);
+        if (email == null) {
+            throw new RuntimeException("Token không hợp lệ hoặc đã hết hạn");
+        }
+
+        // Cập nhật mật khẩu mới
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+        
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
     public Optional<User> updateUserRole(Long userId, String roleName) {
@@ -107,5 +174,33 @@ public class UserService {
         String email = authentication.getName();
         return userRepository.findByEmail(email)
             .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    public ResponseEntity<?> verifyAccount(String email, String otp) {
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.getOtp().equals(otp)) {
+            return ResponseEntity.badRequest().body("Invalid OTP");
+        }
+
+        if (LocalDateTime.now().isAfter(user.getOtpExpiredAt())) {
+            return ResponseEntity.badRequest().body("OTP has expired");
+        }
+
+        user.setOtpVerified(true);
+        user.setOtp(null);
+        user.setOtpExpiredAt(null);
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Account verified successfully");
+    }
+
+    public void updatePassword(String email, String newPassword) {
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+            
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 }

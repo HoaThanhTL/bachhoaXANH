@@ -13,10 +13,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,14 +41,20 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
-
+    private boolean otpVerified = false;
     private String otp;
-    private LocalDateTime otpExpiry;
-    private boolean isOtpVerified;
+    
+    @Column(name = "otp_expired_at")
+    private LocalDateTime otpExpiredAt;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 
     // Constructor
     public User() {
     }
+    
 
     // Getters and Setters
     public Long getUserId() {
@@ -106,19 +113,28 @@ public class User {
         this.otp = otp;
     }
 
-    public LocalDateTime getOtpExpiry() {
-        return otpExpiry;
+    public LocalDateTime getOtpExpiredAt() {
+        return otpExpiredAt;
     }
 
-    public void setOtpExpiry(LocalDateTime otpExpiry) {
-        this.otpExpiry = otpExpiry;
+    public void setOtpExpiredAt(LocalDateTime otpExpiredAt) {
+        this.otpExpiredAt = otpExpiredAt;
     }
 
     public boolean isOtpVerified() {
-        return isOtpVerified;
+        return otpVerified;
     }
 
     public void setOtpVerified(boolean otpVerified) {
-        isOtpVerified = otpVerified;
+        this.otpVerified = otpVerified;
     }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
 }
