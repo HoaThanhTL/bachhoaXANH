@@ -1,6 +1,7 @@
 package com.orebi.security;
 
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,12 +24,14 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
+        // Tạo danh sách authorities với một role duy nhất
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(user.getRole().getRoleName()));
+
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getPassword())
-                .authorities(user.getRoles().stream()
-                        .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
-                        .collect(Collectors.toList()))
+                .authorities(authorities)
                 .build();
     }
 } 

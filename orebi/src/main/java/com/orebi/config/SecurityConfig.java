@@ -43,14 +43,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/api/auth/register",
-                    "/api/auth/login",
-                    "/api/auth/send-otp",
-                    "/api/auth/verify-otp",
-                    "/api/auth/forgot-password",
-                    "/api/auth/reset-password/**"
-                ).permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/products/**", "/api/categories/**", "/api/subcategories/**").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/users/**").hasAnyRole("ADMIN", "USER")

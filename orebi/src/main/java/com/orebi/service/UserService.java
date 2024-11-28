@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.orebi.dto.LoginDTO;
+import com.orebi.dto.MessageResponse;
 import com.orebi.dto.RegisterDTO;
 import com.orebi.entity.Role;
 import com.orebi.entity.User;
@@ -70,30 +71,34 @@ public class UserService {
     }
 
     public ResponseEntity<?> registerUser(RegisterDTO registerDTO) {
-        if (userRepository.findByEmail(registerDTO.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().body("Email already exists");
+        try {
+            if (userRepository.findByEmail(registerDTO.getEmail()).isPresent()) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Email đã tồn tại"));
+            }
+
+            User user = new User();
+            user.setName(registerDTO.getName());
+            user.setEmail(registerDTO.getEmail());
+            user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
+            user.setPhone(registerDTO.getPhone());
+            user.setOtpVerified(false);
+
+            Role userRole = roleRepository.findByRoleName("ROLE_USER")
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy ROLE_USER"));
+            user.setRole(userRole);
+
+            String otp = generateOTP();
+            user.setOtp(otp);
+            user.setOtpExpiredAt(LocalDateTime.now().plusMinutes(5));
+
+            userRepository.save(user);
+            emailService.sendVerificationEmail(user.getEmail(), otp);
+
+            return ResponseEntity.ok(new MessageResponse("Đăng ký thành công. Vui lòng kiểm tra email để xác thực tài khoản"));
+            
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Lỗi đăng ký: " + e.getMessage()));
         }
-
-        User user = new User();
-        user.setName(registerDTO.getName());
-        user.setEmail(registerDTO.getEmail());
-        user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
-        user.setPhone(registerDTO.getPhone());
-        user.setOtpVerified(false);
-
-        Role userRole = roleRepository.findByRoleName("ROLE_USER")
-            .orElseThrow(() -> new RuntimeException("Role not found"));
-        user.setRole(userRole);
-
-        String otp = generateOTP();
-        user.setOtp(otp);
-        user.setOtpExpiredAt(LocalDateTime.now().plusMinutes(5));
-
-        userRepository.save(user);
-
-        emailService.sendVerificationEmail(user.getEmail(), otp);
-
-        return ResponseEntity.ok("Please check your email to verify your account");
     }
 
     private String generateOTP() {
@@ -136,7 +141,6 @@ public class UserService {
         String resetToken = jwtTokenUtil.generatePasswordResetToken(user.getEmail());
         String resetLink = "http://localhost:3000/reset-password/" + resetToken; // Thay đổi domain theo môi trường của bạn
 
-        // Gửi email chứa link reset password
         emailService.sendPasswordResetEmail(user.getEmail(), resetLink);
     }
 
@@ -156,14 +160,13 @@ public class UserService {
     }
 
     public Optional<User> updateUserRole(Long userId, String roleName) {
-        if (userRepository.existsById(userId)) {
-            User user = userRepository.findById(userId).get();
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
             Role role = roleRepository.findByRoleName(roleName)
                 .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
             
-            user.getRoles().clear();
-            user.getRoles().add(role);
-            
+            user.setRole(role);
             return Optional.of(userRepository.save(user));
         }
         return Optional.empty();
