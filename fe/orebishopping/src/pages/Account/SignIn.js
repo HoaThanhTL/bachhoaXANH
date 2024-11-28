@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { logoLight } from "../../assets/images";
+import axios from "axios"; 
 
 const SignIn = () => {
   // ============= Khởi tạo State =============
@@ -24,25 +25,59 @@ const SignIn = () => {
     setErrPassword("");
   };
 
-  const handleSignUp = (e) => {
-    e.preventDefault();
+  // const handleSignUp = (e) => {
+  //   e.preventDefault();
 
-    if (!email) {
-      setErrEmail("Vui lòng nhập email của bạn.");
-    }
+  //   if (!email) {
+  //     setErrEmail("Vui lòng nhập email của bạn.");
+  //   }
 
-    if (!password) {
-      setErrPassword("Vui lòng tạo mật khẩu.");
-    }
+  //   if (!password) {
+  //     setErrPassword("Vui lòng tạo mật khẩu.");
+  //   }
 
-    if (email && password) {
-      setSuccessMsg(
-        `Xin chào! Cảm ơn bạn đã đăng nhập. Chúng tôi đang xử lý yêu cầu của bạn. Thông tin bổ sung sẽ được gửi đến email: ${email}.`
-      );
-      setEmail("");
-      setPassword("");
+  //   if (email && password) {
+  //     setSuccessMsg(
+  //       `Xin chào! Cảm ơn bạn đã đăng nhập. Chúng tôi đang xử lý yêu cầu của bạn. Thông tin bổ sung sẽ được gửi đến email: ${email}.`
+  //     );
+  //     setEmail("");
+  //     setPassword("");
+  //   }
+  // };
+  const API_URL = "http://127.0.0.1:8080/api/auth/login";  // Đường dẫn tuyệt đối đến API
+
+const handleSignUp = async (e) => {
+  e.preventDefault();
+
+  // Kiểm tra nếu email hoặc password rỗng
+  if (!email || !password) {
+    setErrEmail(email ? "" : "Vui lòng nhập email của bạn.");
+    setErrPassword(password ? "" : "Vui lòng tạo mật khẩu.");
+    return;
+  }
+
+  try {
+    // Gửi yêu cầu POST đến API với dữ liệu email và password
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",  // Định dạng dữ liệu gửi đi là JSON
+      },
+      body: JSON.stringify({ email, password }),  // Dữ liệu cần gửi đi
+    });
+
+    // Kiểm tra phản hồi từ API
+    if (response.ok) {
+      const token = await response.text();  // Lấy token nếu đăng nhập thành công
+      setSuccessMsg(`Đăng nhập thành công! Token: ${token}`);
+    } else {
+      setSuccessMsg("Có lỗi xảy ra. Vui lòng thử lại.");  // Thông báo nếu có lỗi
     }
-  };
+  } catch (error) {
+    setSuccessMsg("Không thể kết nối tới máy chủ. Vui lòng kiểm tra lại.");  // Thông báo lỗi kết nối
+  }
+};
+
 
   return (
     <div className="w-full h-screen flex items-center justify-center">
