@@ -1,4 +1,4 @@
-package com.orebi.dto;
+package com.orebi.dto.response;
 
 public class MessageResponse {
     private String message;

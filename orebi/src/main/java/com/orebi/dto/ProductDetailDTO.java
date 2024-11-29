@@ -5,11 +5,34 @@ import java.util.List;
 public class ProductDetailDTO {
     private Long productDetailId;
     private String description;
-    private String destable;
+    private DestableData destable;
     private Long productId;
     private List<ProductImageDTO> images;
 
-    // Getters and Setters
+    // Class để lưu dữ liệu bảng động
+    public static class DestableData {
+        private List<String> headers;     // Tên các cột
+        private List<List<String>> rows;  // Dữ liệu các dòng
+
+        // Getters và Setters
+        public List<String> getHeaders() {
+            return headers;
+        }
+
+        public void setHeaders(List<String> headers) {
+            this.headers = headers;
+        }
+
+        public List<List<String>> getRows() {
+            return rows;
+        }
+
+        public void setRows(List<List<String>> rows) {
+            this.rows = rows;
+        }
+    }
+    
+    // Getters và Setters
     public Long getProductDetailId() {
         return productDetailId;
     }
@@ -26,11 +49,11 @@ public class ProductDetailDTO {
         this.description = description;
     }
 
-    public String getDestable() {
+    public DestableData getDestable() {
         return destable;
     }
 
-    public void setDestable(String destable) {
+    public void setDestable(DestableData destable) {
         this.destable = destable;
     }
 

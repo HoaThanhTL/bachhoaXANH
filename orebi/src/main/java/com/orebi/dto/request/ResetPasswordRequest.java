@@ -1,4 +1,4 @@
-package com.orebi.dto;
+package com.orebi.dto.request;
 
 public class ResetPasswordRequest {
     private String email;
