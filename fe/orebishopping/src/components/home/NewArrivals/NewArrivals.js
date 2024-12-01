@@ -29,18 +29,18 @@
 //     setCategories(updatedCategories);
 //   }, []);
 
-//   const commonSliderSettings = {
-//     infinite: true,
-//     speed: 500,
-//     slidesToScroll: 1,
-//     nextArrow: <SampleNextArrow />,
-//     prevArrow: <SamplePrevArrow />,
-//     responsive: [
-//       { breakpoint: 1025, settings: { slidesToShow: 3, slidesToScroll: 1 } },
-//       { breakpoint: 769, settings: { slidesToShow: 2, slidesToScroll: 1 } },
-//       { breakpoint: 480, settings: { slidesToShow: 1, slidesToScroll: 1 } },
-//     ],
-//   };
+  // const commonSliderSettings = {
+  //   infinite: true,
+  //   speed: 500,
+  //   slidesToScroll: 1,
+  //   nextArrow: <SampleNextArrow />,
+  //   prevArrow: <SamplePrevArrow />,
+  //   responsive: [
+  //     { breakpoint: 1025, settings: { slidesToShow: 3, slidesToScroll: 1 } },
+  //     { breakpoint: 769, settings: { slidesToShow: 2, slidesToScroll: 1 } },
+  //     { breakpoint: 480, settings: { slidesToShow: 1, slidesToScroll: 1 } },
+  //   ],
+  // };
 
 //   const productSliderSettings = {
 //     ...commonSliderSettings,
@@ -112,61 +112,45 @@
 //     </div>
 //   );
 // };
-
-// export default NewArrivals;
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Slider from "react-slick";
 import Heading from "../Products/Heading";
 import Product from "../Products/Product";
-import { fetchAllProducts } from "../../../services/productService";
 import SampleNextArrow from "./SampleNextArrow";
 import SamplePrevArrow from "./SamplePrevArrow";
 
+// Common slider settings should be defined here
+const commonSliderSettings = {
+  infinite: true,
+  speed: 500,
+  slidesToScroll: 1,
+  nextArrow: <SampleNextArrow />,
+  prevArrow: <SamplePrevArrow />,
+  responsive: [
+    { breakpoint: 1025, settings: { slidesToShow: 3, slidesToScroll: 1 } },
+    { breakpoint: 769, settings: { slidesToShow: 2, slidesToScroll: 1 } },
+    { breakpoint: 480, settings: { slidesToShow: 1, slidesToScroll: 1 } },
+  ],
+};
+
 const NewArrivals = () => {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState({});
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchCategories = async () => {
       try {
-        const products = await fetchAllProducts(); // Gọi API, nhận dữ liệu
-        console.log("Fetched Products:", products); // Kiểm tra dữ liệu nhận được
-        setProducts(products);
-  
-        // Phân loại sản phẩm theo category
-        const categorizedProducts = products.reduce((acc, product) => {
-          const categoryName = product.category?.name || "Uncategorized";
-          if (!acc[categoryName]) {
-            acc[categoryName] = [];
-          }
-          acc[categoryName].push(product);
-          return acc;
-        }, {});
-  
-        console.log("Categorized Products:", categorizedProducts); // Kiểm tra dữ liệu đã phân loại
-        setCategories(categorizedProducts);
+        // Gọi API lấy danh sách category
+        const response = await fetch("http://127.0.0.1:8080/api/categories");
+        const data = await response.json();
+        setCategories(data);
       } catch (error) {
-        console.error("Failed to fetch products:", error);
+        console.error("Failed to fetch categories:", error);
       }
     };
-  
-    fetchProducts();
-  }, []);
-  
 
-  const commonSliderSettings = {
-    infinite: true,
-    speed: 500,
-    slidesToScroll: 1,
-    nextArrow: <SampleNextArrow />,
-    prevArrow: <SamplePrevArrow />,
-    responsive: [
-      { breakpoint: 1025, settings: { slidesToShow: 3, slidesToScroll: 1 } },
-      { breakpoint: 769, settings: { slidesToShow: 2, slidesToScroll: 1 } },
-      { breakpoint: 480, settings: { slidesToShow: 1, slidesToScroll: 1 } },
-    ],
-  };
+    fetchCategories();
+  }, []);
 
   const productSliderSettings = {
     ...commonSliderSettings,
@@ -175,34 +159,92 @@ const NewArrivals = () => {
 
   return (
     <div className="w-full pb-16">
-      {Object.keys(categories).map((category) => (
-        <div key={category} className="mb-8">
-          <Heading heading={category} />
-
-          <Slider {...productSliderSettings}>
-            {categories[category].map((product) => (
-              <div key={product.productId} className="px-2">
-                <Product
-                  _id={product.productId}
-                  img={product.image}
-                  productName={product.name}
-                  originalPrice={product.originalPrice}
-                  discountedPrice={product.discountedPrice}
-                  discountPercentage={product.discountPercentage}
-                  unit={product.unit}
-                />
-              </div>
-            ))}
-          </Slider>
-
-          <Link
-            to={`/category/${category}`}
-            className="mt-4 text-blue-500 hover:underline"
-          >
-            Xem thêm
-          </Link>
-        </div>
+      {categories.map((category) => (
+        <CategoryProducts
+          key={category.categoryId}
+          category={category}
+          productSliderSettings={productSliderSettings}
+        />
       ))}
+    </div>
+  );
+};
+
+const CategoryProducts = ({ category, productSliderSettings }) => {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchProductsByCategory = async () => {
+      try {
+        // Gọi API lấy danh sách sản phẩm theo categoryId
+        const response = await fetch(
+          `http://127.0.0.1:8080/api/products/category/${category.categoryId}`
+        );
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error(
+          `Failed to fetch products for category ${category.name}:`,
+          error
+        );
+      }
+    };
+
+    fetchProductsByCategory();
+  }, [category.categoryId, category.name]);
+
+  // Tạo slider banner cho category
+  const bannerSliderSettings = {
+    ...commonSliderSettings,
+    slidesToShow: 1,
+    autoplay: true,
+    autoplaySpeed: 5000,
+  };
+
+  // Tạo mảng ảnh banner: 1 ảnh từ API và 2 ảnh sao chép
+  const bannerImages = [
+    `http://127.0.0.1:8080/images/${category.image}`, // ảnh từ API
+    `https://cdnv2.tgdd.vn/bhx-static/bhx/5599/trang-cate-pc-2_202411271551252708.jpg`, // sao chép ảnh từ API (hoặc dùng ảnh mặc định)
+    `https://cdnv2.tgdd.vn/bhx-static/bhx/5599/pc_202411131032408748.png`, // sao chép ảnh từ API (hoặc dùng ảnh mặc định)
+  ];
+
+  return (
+    <div className="mb-8">
+      
+      {/* Slider Banner */}
+      <div className="mb-4">
+        <Slider {...bannerSliderSettings}>
+          {bannerImages.map((img, index) => (
+            <div key={index} className="px-2">
+              <img src={img} alt={category.name} className="w-full h-auto" />
+            </div>
+          ))}
+        </Slider>
+      </div>
+      <Heading heading={category.name} />
+      {/* Các sản phẩm trong category */}
+      <Slider {...productSliderSettings}>
+        {products.map((product) => (
+          <div key={product.productId} className="px-2">
+            <Product
+              _id={product.productId}
+              img={product.image}
+              productName={product.name}
+              originalPrice={product.originalPrice}
+              discountedPrice={product.discountedPrice}
+              discountPercentage={product.discountPercentage}
+              unit={product.unit}
+            />
+          </div>
+        ))}
+      </Slider>
+
+      <Link
+        to={`/category/${category.categoryId}`}
+        className="mt-4 text-blue-500 hover:underline"
+      >
+        Xem thêm
+      </Link>
     </div>
   );
 };

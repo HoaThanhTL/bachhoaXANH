@@ -53,7 +53,7 @@ public class CategoryService {
         dto.setCategoryId(category.getCategoryId());
         dto.setName(category.getName());
         
-        List<SubCategoryDTO> subCategoryDTOs = category.getSubcategories().stream()
+        List<SubCategoryDTO> subCategoryDTOs = category.getSubCategories().stream()
             .map(sub -> {
                 SubCategoryDTO subDTO = new SubCategoryDTO();
                 subDTO.setSubCategoryId(sub.getSubCategoryId());

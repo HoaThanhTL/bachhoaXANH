@@ -6,6 +6,16 @@ public class SubCategoryDTO {
     private Long categoryId;
     private String categoryName;
 
+    // Constructors
+    public SubCategoryDTO() {}
+
+    public SubCategoryDTO(Long subCategoryId, String name, Long categoryId, String categoryName) {
+        this.subCategoryId = subCategoryId;
+        this.name = name;
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
+    }
+
     // Getters and Setters
     public Long getSubCategoryId() { return subCategoryId; }
     public void setSubCategoryId(Long subCategoryId) { this.subCategoryId = subCategoryId; }

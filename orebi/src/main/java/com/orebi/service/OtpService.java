@@ -30,7 +30,7 @@ public class OtpService {
         
         // Lưu OTP và thời gian hết hạn (5 phút)
         user.setOtp(otp);
-        user.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
+        user.setOtpExpiredAt(LocalDateTime.now().plusMinutes(5));
         user.setOtpVerified(false);
         userRepository.save(user);
 
@@ -47,10 +47,10 @@ public class OtpService {
             .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy người dùng"));
 
         if (user.getOtp().equals(otp)) {
-            if (LocalDateTime.now().isBefore(user.getOtpExpiry())) {
+            if (LocalDateTime.now().isBefore(user.getOtpExpiredAt())) {
                 user.setOtpVerified(true);
                 user.setOtp(null);
-                user.setOtpExpiry(null);
+                user.setOtpExpiredAt(null);
                 userRepository.save(user);
                 return true;
             } else {

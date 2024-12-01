@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.orebi.dto.CategoryDTO;
 import com.orebi.dto.CategoryTreeDTO;
+import com.orebi.dto.SubCategoryDTO;
 import com.orebi.entity.Category;
 import com.orebi.service.CategoryService;
 
@@ -28,7 +29,18 @@ public class CategoryController {
     @GetMapping
     public List<CategoryDTO> getAllCategories() {
         return categoryService.getAllCategories().stream()
-                .map(this::convertToDTO)
+                .map(category -> {
+                    CategoryDTO dto = convertToDTO(category);
+                    dto.setSubCategories(category.getSubCategories().stream()
+                            .map(sub -> new SubCategoryDTO(
+                                sub.getSubCategoryId(),
+                                sub.getName(),
+                                category.getCategoryId(),
+                                category.getName()
+                            ))
+                            .collect(Collectors.toList()));
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -63,7 +75,23 @@ public class CategoryController {
 
     @GetMapping("/tree")
     public List<CategoryTreeDTO> getCategoryTree() {
-        return categoryService.getCategoryTree();
+        return categoryService.getAllCategories().stream()
+                .map(category -> {
+                    CategoryTreeDTO dto = new CategoryTreeDTO();
+                    dto.setCategoryId(category.getCategoryId());
+                    dto.setName(category.getName());
+                    dto.setImage(category.getImage());
+                    dto.setSubCategories(category.getSubCategories().stream()
+                            .map(sub -> new SubCategoryDTO(
+                                sub.getSubCategoryId(),
+                                sub.getName(),
+                                category.getCategoryId(),
+                                category.getName()
+                            ))
+                            .collect(Collectors.toList()));
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
     private CategoryDTO convertToDTO(Category category) {

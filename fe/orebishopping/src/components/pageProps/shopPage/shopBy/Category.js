@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ImPlus } from "react-icons/im";
 import NavTitle from "./NavTitle";
-import categoriesData from "../../../home/data/categoriesData";  // Đảm bảo đường dẫn đúng
-
+import { useNavigate } from "react-router-dom";
 const Category = () => {
-  // State để lưu trạng thái mở/đóng của subcategories cho mỗi category
+  const navigate = useNavigate();
+  // State để lưu danh sách category từ API và trạng thái mở/đóng của subcategories
+  const [categories, setCategories] = useState([]);
   const [openCategory, setOpenCategory] = useState(null);
 
   // Hàm để toggle trạng thái mở/đóng của category
@@ -16,6 +17,21 @@ const Category = () => {
     }
   };
 
+  // Hàm gọi API để lấy danh sách categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8080/api/categories/tree");
+        const data = await response.json();
+        setCategories(data); // Lưu dữ liệu vào state
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories(); // Gọi API khi component mount
+  }, []); // Chạy chỉ một lần khi component mount
+
   return (
     <div className="w-full">
       {/* NavTitle component */}
@@ -23,14 +39,14 @@ const Category = () => {
 
       <div>
         <ul className="flex flex-col gap-4 text-sm lg:text-base text-[#767676]">
-          {categoriesData.map((category) => (
+          {categories.map((category) => (
             <li
-              key={category._id}
+              key={category.categoryId}
               className="border-b-[1px] border-b-[#F0F0F0] pb-2"
             >
               {/* Category name */}
               <div
-                onClick={() => toggleSubCategories(category._id)}
+                onClick={() => toggleSubCategories(category.categoryId)}
                 className="flex items-center justify-between cursor-pointer"
               >
                 <span>{category.name}</span>
@@ -40,18 +56,22 @@ const Category = () => {
               </div>
 
               {/* Nếu category đang mở thì hiển thị các subcategories */}
-              {openCategory === category._id && category.subcategories.length > 0 && (
-                <div className="pl-4 mt-2">
-                  <ul className="space-y-3">
-                    {category.subcategories.map((subcat) => (
-                      <li key={subcat._id} className="flex items-center">
-                        {/* Subcategory name */}
-                        <span className="text-sm text-[#767676]">{subcat.name}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              {openCategory === category.categoryId && category.subCategories.length > 0 && (
+              <div className="pl-4 mt-2">
+                <ul className="space-y-3">
+                  {category.subCategories.map((subcat) => (
+                    <li
+                      key={subcat.subCategoryId}
+                      className="flex items-center cursor-pointer"
+                      onClick={() => navigate(`/subcategory/${subcat.subCategoryId}`)} // Thêm sự kiện chuyển hướng
+                    >
+                      <span className="text-sm text-[#767676] hover:underline">{subcat.name}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             </li>
           ))}
         </ul>

@@ -22,8 +22,8 @@ public class Category {
 
     private String image;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SubCategory> subcategories = new ArrayList<>();
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<SubCategory> subCategories = new ArrayList<>();
 
     // Getters and Setters
     public Long getCategoryId() {
@@ -42,12 +42,12 @@ public class Category {
         this.name = name;
     }
 
-    public List<SubCategory> getSubcategories() {
-        return subcategories;
+    public List<SubCategory> getSubCategories() {
+        return subCategories;
     }
 
-    public void setSubcategories(List<SubCategory> subcategories) {
-        this.subcategories = subcategories;
+    public void setSubCategories(List<SubCategory> subCategories) {
+        this.subCategories = subCategories;
     }
 
     public String getImage() {
@@ -60,12 +60,12 @@ public class Category {
 
     // Helper methods
     public void addSubCategory(SubCategory subCategory) {
-        subcategories.add(subCategory);
+        subCategories.add(subCategory);
         subCategory.setCategory(this);
     }
 
     public void removeSubCategory(SubCategory subCategory) {
-        subcategories.remove(subCategory);
+        subCategories.remove(subCategory);
         subCategory.setCategory(null);
     }
 }

@@ -1,22 +1,18 @@
 package com.orebi.entity;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,21 +29,20 @@ public class User {
     
     private String phone;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "user_roles",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<Role> roles = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 
+    private boolean otpVerified = false;
     private String otp;
-    private LocalDateTime otpExpiry;
-    private boolean isOtpVerified;
+    
+    @Column(name = "otp_expired_at")
+    private LocalDateTime otpExpiredAt;
 
     // Constructor
     public User() {
     }
+    
 
     // Getters and Setters
     public Long getUserId() {
@@ -90,14 +85,6 @@ public class User {
         this.phone = phone;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
     public String getOtp() {
         return otp;
     }
@@ -106,19 +93,28 @@ public class User {
         this.otp = otp;
     }
 
-    public LocalDateTime getOtpExpiry() {
-        return otpExpiry;
+    public LocalDateTime getOtpExpiredAt() {
+        return otpExpiredAt;
     }
 
-    public void setOtpExpiry(LocalDateTime otpExpiry) {
-        this.otpExpiry = otpExpiry;
+    public void setOtpExpiredAt(LocalDateTime otpExpiredAt) {
+        this.otpExpiredAt = otpExpiredAt;
     }
 
     public boolean isOtpVerified() {
-        return isOtpVerified;
+        return otpVerified;
     }
 
     public void setOtpVerified(boolean otpVerified) {
-        isOtpVerified = otpVerified;
+        this.otpVerified = otpVerified;
     }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
 }

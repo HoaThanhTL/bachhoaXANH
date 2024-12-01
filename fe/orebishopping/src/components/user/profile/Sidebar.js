@@ -1,21 +1,19 @@
-// src/components/user/profile/Sidebar/Sidebar.js
 import React from "react";
-import "./Sidebar.css"; // CSS cho Sidebar
+import "./Sidebar.css";
 
 const Sidebar = ({ setSelectedTab }) => {
   return (
-    <div className="sidebar-container">
-      <ul className="sidebar-list">
-        <li onClick={() => setSelectedTab("profile")}>Profile</li>
-        <li onClick={() => setSelectedTab("update-profile")}>Edit Profile</li>
-        <li onClick={() => setSelectedTab("orderHistory")}>Order History</li>
-        <li onClick={() => setSelectedTab("productReviews")}>Product Reviews</li>
-        <li onClick={() => setSelectedTab("changePassword")}>Change Password</li>
-        <li onClick={() => setSelectedTab("offers")}>Offers & Notifications</li>
-        <li onClick={() => setSelectedTab("customerSupport")}>Customer Support</li>
-        <li onClick={() => setSelectedTab("logout")}>Logout</li>
-      </ul>
-    </div>
+    <ul className="sidebar-menu">
+      <li onClick={() => setSelectedTab("profile")}>Thông tin cá nhân</li>
+      <li onClick={() => setSelectedTab("editProfile")}>Chỉnh sửa thông tin</li>
+      <li onClick={() => setSelectedTab("offers")}>Ưu đãi</li>
+      <li onClick={() => setSelectedTab("notifications")}>Thông báo</li>
+      <li onClick={() => setSelectedTab("orderHistory")}>Lịch sử mua hàng</li>
+      <li onClick={() => setSelectedTab("productReviews")}>Đánh giá sản phẩm</li>
+      <li onClick={() => setSelectedTab("changePassword")}>Đổi mật khẩu</li>
+      <li onClick={() => setSelectedTab("privacyPolicy")}>Chính sách & Quyền riêng tư</li>
+      <li onClick={() => setSelectedTab("logout")}>Đăng xuất</li>
+    </ul>
   );
 };
 
