@@ -1,51 +1,103 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { logoLight } from "../../assets/images";
 
 const SignIn = () => {
-  // ============= Khởi tạo State =============
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [errEmail, setErrEmail] = useState("");
   const [errPassword, setErrPassword] = useState("");
+  const [authError, setAuthError] = useState(""); // Thêm lỗi chung cho việc xác thực
+  const [successModal, setSuccessModal] = useState(false);
 
-  const [successMsg, setSuccessMsg] = useState("");
+  const API_URL = "http://127.0.0.1:8080/api/auth/login";
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // ============= Xử lý sự kiện =============
   const handleEmail = (e) => {
     setEmail(e.target.value);
-    setErrEmail("");
+    setErrEmail(""); // Tắt lỗi email khi người dùng nhập lại
+    setAuthError(""); // Tắt lỗi xác thực khi người dùng nhập lại
   };
 
   const handlePassword = (e) => {
     setPassword(e.target.value);
-    setErrPassword("");
+    setErrPassword(""); // Tắt lỗi password khi người dùng nhập lại
+    setAuthError(""); // Tắt lỗi xác thực khi người dùng nhập lại
   };
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
 
-    if (!email) {
-      setErrEmail("Vui lòng nhập email của bạn.");
+    if (!email || !password) {
+      setErrEmail(email ? "" : "Vui lòng nhập email của bạn.");
+      setErrPassword(password ? "" : "Vui lòng tạo mật khẩu.");
+      return;
     }
 
-    if (!password) {
-      setErrPassword("Vui lòng tạo mật khẩu.");
-    }
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (email && password) {
-      setSuccessMsg(
-        `Xin chào! Cảm ơn bạn đã đăng nhập. Chúng tôi đang xử lý yêu cầu của bạn. Thông tin bổ sung sẽ được gửi đến email: ${email}.`
-      );
-      setEmail("");
-      setPassword("");
+      if (response.ok) {
+        const token = await response.text();
+        localStorage.setItem("authToken", token);
+        console.log("Đây là token:",token)
+
+        setSuccessModal(true); // Hiển thị modal thành công
+
+        // Lưu lại trang hiện tại vào localStorage
+        localStorage.setItem("lastPath", location.pathname);
+        console.log("Kiểm tra", localStorage.getItem("authToken"))
+
+        // Ẩn modal sau 1 giây và điều hướng
+        setTimeout(() => {
+          setSuccessModal(false); // Ẩn modal
+          const lastPath = localStorage.getItem("lastPath");
+          const restrictedPaths = ["/signup", "/verify-otp", "/signin"];
+
+          // Kiểm tra nếu trang trước là một trong các trang hạn chế
+          if (restrictedPaths.includes(lastPath)) {
+            navigate("/"); // Điều hướng về trang Home
+          } else {
+            navigate(lastPath); // Điều hướng về trang gần nhất
+          }
+        }, 1000); // Hiển thị modal trong 1 giây
+      } else {
+        const data = await response.json();
+        if (data.message === "Email hoặc mật khẩu không chính xác") {
+          setAuthError("Email hoặc mật khẩu không chính xác.");
+        }
+      }
+    } catch (error) {
+      setErrEmail("Không thể kết nối tới máy chủ. Vui lòng kiểm tra lại.");
     }
   };
+
+  useEffect(() => {
+    const currentPath = location.pathname;
+    localStorage.setItem("lastPath", currentPath);
+  }, [location]);
 
   return (
     <div className="w-full h-screen flex items-center justify-center">
+      {/* Modal thông báo thành công */}
+      {successModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-md shadow-md text-center">
+            <BsCheckCircleFill className="text-green-500 text-4xl mx-auto mb-3" />
+            <p className="text-lg font-semibold">Đăng nhập thành công!</p>
+          </div>
+        </div>
+      )}
+
       {/* Cột bên trái */}
       <div className="w-1/2 hidden lgl:inline-flex h-full text-white">
         <div className="w-[450px] h-full bg-primeColor px-10 flex flex-col gap-6 justify-center">
@@ -115,85 +167,78 @@ const SignIn = () => {
 
       {/* Cột bên phải */}
       <div className="w-full lgl:w-1/2 h-full">
-        {successMsg ? (
-          <div className="w-full lgl:w-[500px] h-full flex flex-col justify-center">
-            <p className="w-full px-4 py-10 text-green-500 font-medium font-titleFont">
-              {successMsg}
-            </p>
-            <Link to="/signup">
-              <button
-                className="w-full h-10 bg-primeColor text-gray-200 rounded-md text-base font-titleFont font-semibold 
-            tracking-wide hover:bg-black hover:text-white duration-300"
-              >
-                Đăng ký
-              </button>
-            </Link>
-          </div>
-        ) : (
-          <form className="w-full lgl:w-[450px] h-screen flex items-center justify-center">
-            <div className="px-6 py-4 w-full h-[90%] flex flex-col justify-center overflow-y-scroll scrollbar-thin scrollbar-thumb-primeColor">
-              <h1 className="font-titleFont underline underline-offset-4 decoration-[1px] font-semibold text-3xl mdl:text-4xl mb-4">
-                Đăng nhập
-              </h1>
-              <div className="flex flex-col gap-3">
-                {/* Email */}
-                <div className="flex flex-col gap-.5">
-                  <p className="font-titleFont text-base font-semibold text-gray-600">
-                    Email công việc
-                  </p>
-                  <input
-                    onChange={handleEmail}
-                    value={email}
-                    className="w-full h-8 placeholder:text-sm placeholder:tracking-wide px-4 text-base font-medium placeholder:font-normal rounded-md border-[1px] border-gray-400 outline-none"
-                    type="email"
-                    placeholder="name@domain.com"
-                  />
-                  {errEmail && (
-                    <p className="text-sm text-red-500 font-titleFont font-semibold px-4">
-                      <span className="font-bold italic mr-1">!</span>
-                      {errEmail}
-                    </p>
-                  )}
-                </div>
-
-                {/* Password */}
-                <div className="flex flex-col gap-.5">
-                  <p className="font-titleFont text-base font-semibold text-gray-600">
-                    Mật khẩu
-                  </p>
-                  <input
-                    onChange={handlePassword}
-                    value={password}
-                    className="w-full h-8 placeholder:text-sm placeholder:tracking-wide px-4 text-base font-medium placeholder:font-normal rounded-md border-[1px] border-gray-400 outline-none"
-                    type="password"
-                    placeholder="Tạo mật khẩu"
-                  />
-                  {errPassword && (
-                    <p className="text-sm text-red-500 font-titleFont font-semibold px-4">
-                      <span className="font-bold italic mr-1">!</span>
-                      {errPassword}
-                    </p>
-                  )}
-                </div>
-
-                <button
-                  onClick={handleSignUp}
-                  className="bg-primeColor hover:bg-black text-gray-200 hover:text-white cursor-pointer w-full text-base font-medium h-10 rounded-md duration-300"
-                >
-                  Đăng nhập
-                </button>
-                <p className="text-sm text-center font-titleFont font-medium">
-                  Chưa có tài khoản?{" "}
-                  <Link to="/signup">
-                    <span className="hover:text-blue-600 duration-300">
-                      Đăng ký
-                    </span>
-                  </Link>
+        <form className="w-full lgl:w-[450px] h-screen flex items-center justify-center">
+          <div className="px-6 py-4 w-full h-[90%] flex flex-col justify-center overflow-y-scroll scrollbar-thin scrollbar-thumb-primeColor">
+            <h1 className="font-titleFont underline underline-offset-4 decoration-[1px] font-semibold text-3xl mdl:text-4xl mb-4">
+              Đăng nhập
+            </h1>
+            <div className="flex flex-col gap-3">
+              {/* Email */}
+              <div className="flex flex-col gap-.5">
+                <p className="font-titleFont text-base font-semibold text-gray-600">
+                  Email công việc
                 </p>
+                <input
+                  onChange={handleEmail}
+                  value={email}
+                  className="w-full h-8 placeholder:text-sm placeholder:tracking-wide px-4 text-base font-medium placeholder:font-normal rounded-md border-[1px] border-gray-400 outline-none"
+                  type="email"
+                  placeholder="name@domain.com"
+                />
+                {errEmail && (
+                  <p className="text-sm text-red-500 font-titleFont font-semibold px-4">
+                    <span className="font-bold italic mr-1">!</span>
+                    {errEmail}
+                  </p>
+                )}
+              </div>
+
+              {/* Password */}
+              <div className="flex flex-col gap-.5">
+                <p className="font-titleFont text-base font-semibold text-gray-600">
+                  Mật khẩu
+                </p>
+                <input
+                  onChange={handlePassword}
+                  value={password}
+                  className="w-full h-8 placeholder:text-sm placeholder:tracking-wide px-4 text-base font-medium placeholder:font-normal rounded-md border-[1px] border-gray-400 outline-none"
+                  type="password"
+                  placeholder="******"
+                />
+                {errPassword && (
+                  <p className="text-sm text-red-500 font-titleFont font-semibold px-4">
+                    <span className="font-bold italic mr-1">!</span>
+                    {errPassword}
+                  </p>
+                )}
+                {authError && (
+                  <p className="text-sm text-red-500 font-titleFont font-semibold px-4">
+                    <span className="font-bold italic mr-1">!</span>
+                    {authError}
+                  </p>
+                )}
+              </div>
+
+              {/* Sign Up Button */}
+              <button
+                onClick={handleSignUp}
+                className="w-full py-2 mt-4 bg-primeColor text-white text-lg font-semibold rounded-md hover:bg-[#2521e1] duration-300"
+              >
+                Đăng nhập
+              </button>
+
+              {/* Link to SignUp */}
+              <div className="flex justify-between mt-6 text-sm text-gray-500">
+                <p>Bạn chưa có tài khoản?</p>
+                <Link to="/signup">
+                  <p className="font-semibold cursor-pointer hover:text-primeColor">
+                    Đăng ký
+                  </p>
+                </Link>
               </div>
             </div>
-          </form>
-        )}
+          </div>
+        </form>
       </div>
     </div>
   );

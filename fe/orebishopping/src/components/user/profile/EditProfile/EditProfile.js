@@ -1,6 +1,6 @@
 // src/components/user/profile/EditProfile/EditProfile.js
 import React, { useState } from "react";
-import "./EditProfile.css"; // Đảm bảo có file CSS riêng cho EditProfile
+import "./EditProfile.css";
 
 const EditProfile = ({ user }) => {
   const [formData, setFormData] = useState({
