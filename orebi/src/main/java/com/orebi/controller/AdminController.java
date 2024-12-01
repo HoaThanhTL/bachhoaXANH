@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.orebi.dto.OrderDTO;
 import com.orebi.dto.ProductDTO;
+import com.orebi.entity.OrderStatus;
 import com.orebi.entity.SubCategory;
 import com.orebi.entity.User;
 import com.orebi.service.OrderService;
 import com.orebi.service.ProductService;
 import com.orebi.service.SubCategoryService;
 import com.orebi.service.UserService;
-
 @RestController
 @RequestMapping("/api/admin")
 @PreAuthorize("hasRole('ADMIN')")
@@ -87,7 +87,7 @@ public class AdminController {
 
     @PutMapping("/orders/{orderId}/status")
     public ResponseEntity<OrderDTO> updateOrderStatus(@PathVariable Long orderId, @RequestBody Map<String, String> status) {
-        return orderService.updateOrderStatus(orderId, status.get("status"))
+        return orderService.updateOrderStatus(orderId, OrderStatus.valueOf(status.get("status")))
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
     }
@@ -137,5 +137,15 @@ public class AdminController {
             @PathVariable Long subCategoryId) {
         subCategoryService.deleteSubCategory(subCategoryId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/orders/statistics")
+    public Map<String, Object> getOrderStatistics() {
+        return orderService.getOrderStatistics();
+    }
+
+    @GetMapping("/orders/status/{status}")
+    public List<OrderDTO> getOrdersByStatus(@PathVariable OrderStatus status) {
+        return orderService.getOrdersByStatus(status);
     }
 }

@@ -2,12 +2,18 @@ package com.orebi.dto;
 
 import java.util.List;
 
+import com.orebi.entity.OrderStatus;
+
 public class OrderDTO {
     private Long orderId;
     private Long userId;
     private String orderDate;
     private double totalPrice;
     private String paymentMethod;
+    private OrderStatus status;
+    private String shippingAddress;
+    private String phone;
+    private String note;
     private List<OrderDetailDTO> orderDetails;
 
     // Getters and Setters
@@ -49,6 +55,38 @@ public class OrderDTO {
 
     public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
+    }
+
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
+
+    public String getShippingAddress() {
+        return shippingAddress;
+    }
+
+    public void setShippingAddress(String shippingAddress) {
+        this.shippingAddress = shippingAddress;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public List<OrderDetailDTO> getOrderDetails() {

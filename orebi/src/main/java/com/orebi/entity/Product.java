@@ -115,4 +115,9 @@ public class Product {
         this.subCategory = subCategory;
     }
 
+    // Thêm method để lấy giá cuối cùng của sản phẩm
+    public double getPrice() {
+        return discountedPrice > 0 ? discountedPrice : originalPrice;
+    }
+
 }

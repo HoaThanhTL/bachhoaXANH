@@ -101,8 +101,7 @@ public class ProductService {
     }
 
     public List<ProductDTO> getTopSellingProducts() {
-        List<Product> topProducts = orderRepository.findTopSellingProducts();
-        return topProducts.stream()
+        return orderRepository.findTopSellingProducts().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }

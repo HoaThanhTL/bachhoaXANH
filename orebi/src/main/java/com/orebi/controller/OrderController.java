@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.orebi.dto.OrderDTO;
 import com.orebi.entity.Order;
+import com.orebi.entity.OrderStatus;
 import com.orebi.service.OrderService;
 
 @RestController
@@ -57,6 +58,25 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{orderId}/status")
+    public ResponseEntity<OrderDTO> updateOrderStatus(
+            @PathVariable Long orderId,
+            @RequestBody OrderStatus status) {
+        return orderService.updateOrderStatus(orderId, status)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/user/{userId}")
+    public List<OrderDTO> getUserOrders(@PathVariable Long userId) {
+        return orderService.getOrdersByUserId(userId);
+    }
+
+    @GetMapping("/status/{status}")
+    public List<OrderDTO> getOrdersByStatus(@PathVariable OrderStatus status) {
+        return orderService.getOrdersByStatus(status);
+    }
+
     private OrderDTO convertToDTO(Order order) {
         OrderDTO dto = new OrderDTO();
         dto.setOrderId(order.getOrderId());
@@ -70,7 +90,6 @@ public class OrderController {
     private Order convertToEntity(OrderDTO orderDTO) {
         Order order = new Order();
         order.setOrderId(orderDTO.getOrderId());
-        // Set User entity based on ID
         return order;
     }
 }

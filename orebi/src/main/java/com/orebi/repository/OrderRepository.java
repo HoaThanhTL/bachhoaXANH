@@ -8,14 +8,24 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.orebi.entity.Order;
+import com.orebi.entity.OrderStatus;
 import com.orebi.entity.Product;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
+    List<Order> findByUser_UserIdOrderByDateDesc(Long userId);
+    List<Order> findByStatus(OrderStatus status);
+    
     @Query("SELECT SUM(o.totalPrice) FROM Order o")
     Double sumTotalPrice();
     
     Long countByDateStartsWith(String date);
+    
+    @Query("SELECT SUM(o.totalPrice) FROM Order o WHERE o.status = 'DELIVERED'")
+    Double calculateTotalRevenue();
+    
+    @Query("SELECT o.status, COUNT(o) FROM Order o GROUP BY o.status")
+    List<Object[]> countByStatus();
     
     @Query(value = """
         SELECT c.name as category, COUNT(od.order_id) as orderCount, 

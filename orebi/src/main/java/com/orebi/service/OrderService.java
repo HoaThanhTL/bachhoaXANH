@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 
 import com.orebi.dto.OrderDTO;
 import com.orebi.entity.Order;
+import com.orebi.entity.OrderStatus;
 import com.orebi.repository.OrderRepository;
+
 @Service
 public class OrderService {
     @Autowired
@@ -31,6 +33,9 @@ public class OrderService {
         dto.setOrderDate(order.getDate());
         dto.setTotalPrice(order.getTotalPrice());
         dto.setPaymentMethod(order.getPaymentMethod());
+        dto.setStatus(order.getStatus());
+        dto.setShippingAddress(order.getShippingAddress());
+        dto.setPhone(order.getPhone());
         return dto;
     }
 
@@ -54,9 +59,12 @@ public class OrderService {
         orderRepository.deleteById(id);
     }
 
-    public Optional<OrderDTO> updateOrderStatus(Long orderId, String status) {
-        // Implementation to update order status
-        return Optional.empty();
+    public Optional<OrderDTO> updateOrderStatus(Long orderId, OrderStatus status) {
+        return orderRepository.findById(orderId)
+            .map(order -> {
+                order.setStatus(status);
+                return convertToDTO(orderRepository.save(order));
+            });
     }
 
     public Map<String, Object> getSalesStatistics() {
@@ -84,5 +92,26 @@ public class OrderService {
 
     public List<Map<String, Object>> getCategorySales() {
         return orderRepository.findCategorySales();
+    }
+
+    public List<OrderDTO> getOrdersByUserId(Long userId) {
+        return orderRepository.findByUser_UserIdOrderByDateDesc(userId).stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
+
+    public List<OrderDTO> getOrdersByStatus(OrderStatus status) {
+        return orderRepository.findByStatus(status).stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
+
+    // Thống kê
+    public Map<String, Object> getOrderStatistics() {
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("totalOrders", orderRepository.count());
+        stats.put("totalRevenue", orderRepository.calculateTotalRevenue());
+        stats.put("ordersByStatus", orderRepository.countByStatus());
+        return stats;
     }
 }
