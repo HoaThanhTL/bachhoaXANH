@@ -2,12 +2,12 @@ package com.orebi.dto;
 
 public class OrderDetailDTO {
     private Long orderDetailId;
-    private Long orderId; // Chỉ lưu ID của Order
-    private Long productId; // Chỉ lưu ID của Product
+    private Long orderId;
+    private ProductSnapshotDTO productSnapshot;
     private int quantity;
     private double totalLineItem;
 
-    // Getters and Setters
+    // Getters/setters
     public Long getOrderDetailId() {
         return orderDetailId;
     }
@@ -24,12 +24,12 @@ public class OrderDetailDTO {
         this.orderId = orderId;
     }
 
-    public Long getProductId() {
-        return productId;
+    public ProductSnapshotDTO getProductSnapshot() {
+        return productSnapshot;
     }
 
-    public void setProductId(Long productId) {
-        this.productId = productId;
+    public void setProductSnapshot(ProductSnapshotDTO productSnapshot) {
+        this.productSnapshot = productSnapshot;
     }
 
     public int getQuantity() {

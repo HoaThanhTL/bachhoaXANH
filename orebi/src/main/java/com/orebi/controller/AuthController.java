@@ -22,7 +22,6 @@ import com.orebi.dto.response.MessageResponse;
 import com.orebi.dto.response.TokenResponse;
 import com.orebi.entity.User;
 import com.orebi.security.JwtTokenUtil;
-import com.orebi.service.EmailService;
 import com.orebi.service.OtpService;
 import com.orebi.service.RefreshTokenService;
 import com.orebi.service.UserService;
@@ -38,9 +37,6 @@ public class AuthController {
 
     @Autowired
     private OtpService otpService;
-
-    @Autowired
-    private EmailService emailService;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;

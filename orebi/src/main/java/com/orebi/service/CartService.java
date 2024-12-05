@@ -3,6 +3,7 @@ package com.orebi.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,7 @@ import com.orebi.entity.User;
 import com.orebi.exception.ResourceNotFoundException;
 import com.orebi.repository.CartRepository;
 import com.orebi.repository.OrderRepository;
+
 
 @Service
 @Transactional
@@ -116,35 +118,50 @@ public class CartService {
         Cart cart = getCurrentUserCart();
         
         Order order = new Order();
-        order.setUser(cart.getUser());
-        order.setDate(LocalDateTime.now().toString());
+        order.setOrderDate(LocalDateTime.now());
         order.setStatus(OrderStatus.PENDING);
         order.setPaymentMethod(orderDTO.getPaymentMethod());
         order.setShippingAddress(orderDTO.getShippingAddress());
         order.setPhone(orderDTO.getPhone());
         order.setNote(orderDTO.getNote());
-        
-        // Chuyển LineItem sang OrderDetail
-        List<OrderDetail> orderDetails = cart.getLineItems().stream()
+        order.setIsPaid(false);
+        order.setCreatedAt(LocalDateTime.now());
+        order.setUpdatedAt(LocalDateTime.now());
+
+        // Gom nhóm các sản phẩm giống nhau
+        Map<Long, LineItem> groupedItems = cart.getLineItems().stream()
+            .collect(Collectors.groupingBy(
+                item -> item.getProduct().getProductId(),
+                Collectors.reducing(null, (a, b) -> {
+                    if (a == null) return b;
+                    a.setQuantity(a.getQuantity() + b.getQuantity());
+                    return a;
+                })
+            ));
+
+        // Tạo orderDetails từ các sản phẩm đã gom nhóm
+        List<OrderDetail> orderDetails = groupedItems.values().stream()
             .map(lineItem -> {
                 OrderDetail detail = new OrderDetail();
+                Product product = lineItem.getProduct();
+                
                 detail.setOrder(order);
-                detail.setProduct(lineItem.getProduct());
+                detail.setProductId(product.getProductId());
+                detail.setProductName(product.getName());
+                detail.setProductImage(product.getImage());
+                detail.setPrice(product.getDiscountedPrice());
                 detail.setQuantity(lineItem.getQuantity());
+                detail.setTotalLineItem(product.getDiscountedPrice() * lineItem.getQuantity());
+                
                 return detail;
             })
             .collect(Collectors.toList());
-        
+
         order.setOrderDetails(orderDetails);
-        
-        double totalPrice = cart.getLineItems().stream()
-            .mapToDouble(lineItem -> lineItem.getProduct().getPrice() * lineItem.getQuantity())
-            .sum();
-        order.setTotalPrice(totalPrice);
-        
-        Order savedOrder = orderRepository.save(order);
-        clearCart();
-        
-        return savedOrder;
+        order.setTotalPrice(orderDetails.stream()
+            .mapToDouble(OrderDetail::getTotalLineItem)
+            .sum());
+
+        return orderRepository.save(order);
     }
 }

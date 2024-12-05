@@ -1,5 +1,6 @@
 package com.orebi.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -13,13 +14,13 @@ import com.orebi.entity.Product;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    List<Order> findByUser_UserIdOrderByDateDesc(Long userId);
+    List<Order> findByUser_UserIdOrderByOrderDateDesc(Long userId);
     List<Order> findByStatus(OrderStatus status);
     
     @Query("SELECT SUM(o.totalPrice) FROM Order o")
     Double sumTotalPrice();
     
-    Long countByDateStartsWith(String date);
+    Long countByOrderDateBetween(LocalDateTime startOfDay, LocalDateTime endOfDay);
     
     @Query("SELECT SUM(o.totalPrice) FROM Order o WHERE o.status = 'DELIVERED'")
     Double calculateTotalRevenue();

@@ -1,6 +1,7 @@
 package com.orebi.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.orebi.dto.OrderDTO;
+import com.orebi.dto.OrderDetailDTO;
+import com.orebi.dto.ProductSnapshotDTO;
 import com.orebi.entity.Order;
+import com.orebi.entity.OrderDetail;
 import com.orebi.entity.OrderStatus;
 import com.orebi.repository.OrderRepository;
 
@@ -29,73 +33,66 @@ public class OrderService {
     private OrderDTO convertToDTO(Order order) {
         OrderDTO dto = new OrderDTO();
         dto.setOrderId(order.getOrderId());
-        dto.setUserId(order.getUser().getUserId());
-        dto.setOrderDate(order.getDate());
-        dto.setTotalPrice(order.getTotalPrice());
-        dto.setPaymentMethod(order.getPaymentMethod());
+        dto.setOrderDate(order.getOrderDate());
         dto.setStatus(order.getStatus());
+        dto.setPaymentMethod(order.getPaymentMethod());
         dto.setShippingAddress(order.getShippingAddress());
         dto.setPhone(order.getPhone());
+        dto.setTotalPrice(order.getTotalPrice());
+        dto.setPaid(order.getIsPaid());
+        dto.setNote(order.getNote());
+        dto.setCreatedAt(order.getCreatedAt());
+        dto.setUpdatedAt(order.getUpdatedAt());
+        
+        // Convert order details
+        dto.setOrderDetails(order.getOrderDetails().stream()
+            .map(this::convertToDetailDTO)
+            .collect(Collectors.toList()));
+        
         return dto;
     }
 
-    public Optional<Order> getOrderById(Long id) {
-        return orderRepository.findById(id);
+    private OrderDetailDTO convertToDetailDTO(OrderDetail detail) {
+        OrderDetailDTO dto = new OrderDetailDTO();
+        dto.setOrderDetailId(detail.getOrderDetailId());
+        dto.setOrderId(detail.getOrder().getOrderId());
+        
+        // Convert product snapshot
+        ProductSnapshotDTO snapshot = new ProductSnapshotDTO();
+        snapshot.setProductId(detail.getProductId());
+        snapshot.setName(detail.getProductName());
+        snapshot.setImage(detail.getProductImage());
+        snapshot.setPrice(detail.getPrice());
+        
+        dto.setProductSnapshot(snapshot);
+        dto.setQuantity(detail.getQuantity());
+        dto.setTotalLineItem(detail.getTotalLineItem());
+        
+        return dto;
+    }
+
+    public Optional<OrderDTO> getOrderById(Long id) {
+        return orderRepository.findById(id)
+            .map(this::convertToDTO);
     }
 
     public Order createOrder(Order order) {
+        order.setCreatedAt(LocalDateTime.now());
+        order.setUpdatedAt(LocalDateTime.now());
         return orderRepository.save(order);
-    }
-
-    public Optional<Order> updateOrder(Long id, Order order) {
-        if (orderRepository.existsById(id)) {
-            order.setOrderId(id);
-            return Optional.of(orderRepository.save(order));
-        }
-        return Optional.empty();
-    }
-
-    public void deleteOrder(Long id) {
-        orderRepository.deleteById(id);
     }
 
     public Optional<OrderDTO> updateOrderStatus(Long orderId, OrderStatus status) {
         return orderRepository.findById(orderId)
             .map(order -> {
                 order.setStatus(status);
+                order.setUpdatedAt(LocalDateTime.now());
                 return convertToDTO(orderRepository.save(order));
             });
     }
 
-    public Map<String, Object> getSalesStatistics() {
-        // Implementation to get sales statistics
-        return new HashMap<>();
-    }
-
-    public Map<String, Object> getOverviewStatistics() {
-        Map<String, Object> stats = new HashMap<>();
-        
-        // Tổng số đơn hàng
-        stats.put("totalOrders", orderRepository.count());
-        
-        // Tổng doanh thu
-        Double totalRevenue = orderRepository.sumTotalPrice();
-        stats.put("totalRevenue", totalRevenue != null ? totalRevenue : 0.0);
-        
-        // Số đơn hàng trong ngày
-        LocalDate today = LocalDate.now();
-        Long todayOrders = orderRepository.countByDateStartsWith(today.toString());
-        stats.put("todayOrders", todayOrders != null ? todayOrders : 0);
-        
-        return stats;
-    }
-
-    public List<Map<String, Object>> getCategorySales() {
-        return orderRepository.findCategorySales();
-    }
-
     public List<OrderDTO> getOrdersByUserId(Long userId) {
-        return orderRepository.findByUser_UserIdOrderByDateDesc(userId).stream()
+        return orderRepository.findByUser_UserIdOrderByOrderDateDesc(userId).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
@@ -113,5 +110,12 @@ public class OrderService {
         stats.put("totalRevenue", orderRepository.calculateTotalRevenue());
         stats.put("ordersByStatus", orderRepository.countByStatus());
         return stats;
+    }
+
+    public Long countOrdersByDate(String dateStr) {
+        LocalDate date = LocalDate.parse(dateStr); // Format: yyyy-MM-dd
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(23, 59, 59);
+        return orderRepository.countByOrderDateBetween(startOfDay, endOfDay);
     }
 }
