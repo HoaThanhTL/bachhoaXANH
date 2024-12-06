@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -31,13 +32,23 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
     
-    private String paymentMethod;
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+    
     private String shippingAddress;
     private String phone;
     private double totalPrice;
     private boolean isPaid;
-    private String note;
     
+    @Column(columnDefinition = "TEXT")
+    private String bankTransferImage;
+    
+    @Column(columnDefinition = "TEXT")
+    private String paymentNote;
+    
+    private String vnpayTransactionNo;
+    
+    private String note;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -56,8 +67,8 @@ public class Order {
     public OrderStatus getStatus() { return status; }
     public void setStatus(OrderStatus status) { this.status = status; }
     
-    public String getPaymentMethod() { return paymentMethod; }
-    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+    public PaymentMethod getPaymentMethod() { return paymentMethod; }
+    public void setPaymentMethod(PaymentMethod paymentMethod) { this.paymentMethod = paymentMethod; }
     
     public String getShippingAddress() { return shippingAddress; }
     public void setShippingAddress(String shippingAddress) { this.shippingAddress = shippingAddress; }
@@ -82,4 +93,13 @@ public class Order {
     
     public List<OrderDetail> getOrderDetails() { return orderDetails; }
     public void setOrderDetails(List<OrderDetail> orderDetails) { this.orderDetails = orderDetails; }
+    
+    public String getBankTransferImage() { return bankTransferImage; }
+    public void setBankTransferImage(String bankTransferImage) { this.bankTransferImage = bankTransferImage; }
+    
+    public String getPaymentNote() { return paymentNote; }
+    public void setPaymentNote(String paymentNote) { this.paymentNote = paymentNote; }
+    
+    public String getVnpayTransactionNo() { return vnpayTransactionNo; }
+    public void setVnpayTransactionNo(String vnpayTransactionNo) { this.vnpayTransactionNo = vnpayTransactionNo; }
 }

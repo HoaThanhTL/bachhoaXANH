@@ -49,6 +49,11 @@ public class OrderService {
             .map(this::convertToDetailDTO)
             .collect(Collectors.toList()));
         
+        dto.setPaymentMethod(order.getPaymentMethod());
+        dto.setBankTransferImage(order.getBankTransferImage());
+        dto.setPaymentNote(order.getPaymentNote());
+        dto.setVnpayTransactionNo(order.getVnpayTransactionNo());
+        
         return dto;
     }
 
@@ -117,5 +122,37 @@ public class OrderService {
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(23, 59, 59);
         return orderRepository.countByOrderDateBetween(startOfDay, endOfDay);
+    }
+
+    public Order getOrderEntityById(Long id) {
+        return orderRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
+    }
+
+    public OrderDTO saveOrder(Order order) {
+        order.setUpdatedAt(LocalDateTime.now());
+        return convertToDTO(orderRepository.save(order));
+    }
+
+    public OrderDTO cancelOrder(Long orderId, String reason) {
+        Order order = getOrderEntityById(orderId);
+        
+        // Kiểm tra điều kiện hủy
+        if (!canCancel(order)) {
+            throw new RuntimeException("Không thể hủy đơn hàng này");
+        }
+        
+        // Cập nhật trạng thái
+        order.setStatus(OrderStatus.CANCELLED);
+        order.setNote(reason);
+        order.setUpdatedAt(LocalDateTime.now());
+        
+        return convertToDTO(orderRepository.save(order));
+    }
+
+    private boolean canCancel(Order order) {
+        // Chỉ hủy được đơn PENDING hoặc PENDING_PAYMENT
+        return order.getStatus() == OrderStatus.PENDING || 
+               order.getStatus() == OrderStatus.PENDING_PAYMENT;
     }
 }

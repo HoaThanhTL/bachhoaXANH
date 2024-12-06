@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.orebi.dto.request.CancelOrderRequest;
 import com.orebi.dto.OrderDTO;
 import com.orebi.entity.Order;
 import com.orebi.entity.OrderStatus;
@@ -64,5 +65,18 @@ public class OrderController {
     @GetMapping("/statistics")
     public ResponseEntity<Map<String, Object>> getOrderStatistics() {
         return ResponseEntity.ok(orderService.getOrderStatistics());
+    }
+
+    @PostMapping("/{orderId}/cancel")
+    public ResponseEntity<?> cancelOrder(
+        @PathVariable Long orderId,
+        @RequestBody CancelOrderRequest request
+    ) {
+        try {
+            OrderDTO cancelledOrder = orderService.cancelOrder(orderId, request.getReason());
+            return ResponseEntity.ok(cancelledOrder);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

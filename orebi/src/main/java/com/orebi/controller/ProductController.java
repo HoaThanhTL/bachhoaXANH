@@ -1,9 +1,12 @@
 package com.orebi.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.orebi.dto.ProductDTO;
@@ -70,6 +74,31 @@ public class ProductController {
         return productService.getProductsBySubCategory(subCategoryId).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/paged")
+    public ResponseEntity<Map<String, Object>> getAllProductsPaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword) {
+        try {
+            List<ProductDTO> products = productService.getAllProductsPaged(page, size, keyword);
+            long totalItems = productService.getTotalProducts(keyword);
+            int totalPages = (int) Math.ceil((double) totalItems / size);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("products", products);
+            response.put("currentPage", page);
+            response.put("totalItems", totalItems);
+            response.put("totalPages", totalPages);
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                response.put("keyword", keyword);
+            }
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     private ProductDTO convertToDTO(Product product) {

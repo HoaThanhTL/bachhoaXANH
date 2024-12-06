@@ -4,16 +4,20 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.orebi.entity.OrderStatus;
+import com.orebi.entity.PaymentMethod;
 
 public class OrderDTO {
     private Long orderId;
     private LocalDateTime orderDate;
     private OrderStatus status;
-    private String paymentMethod;
+    private PaymentMethod paymentMethod;
     private String shippingAddress;
     private String phone;
     private double totalPrice;
     private boolean isPaid;
+    private String bankTransferImage;
+    private String paymentNote;
+    private String vnpayTransactionNo;
     private String note;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -44,11 +48,11 @@ public class OrderDTO {
         this.status = status;
     }
 
-    public String getPaymentMethod() {
+    public PaymentMethod getPaymentMethod() {
         return paymentMethod;
     }
 
-    public void setPaymentMethod(String paymentMethod) {
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
@@ -82,6 +86,30 @@ public class OrderDTO {
 
     public void setPaid(boolean paid) {
         isPaid = paid;
+    }
+
+    public String getBankTransferImage() {
+        return bankTransferImage;
+    }
+
+    public void setBankTransferImage(String bankTransferImage) {
+        this.bankTransferImage = bankTransferImage;
+    }
+
+    public String getPaymentNote() {
+        return paymentNote;
+    }
+
+    public void setPaymentNote(String paymentNote) {
+        this.paymentNote = paymentNote;
+    }
+
+    public String getVnpayTransactionNo() {
+        return vnpayTransactionNo;
+    }
+
+    public void setVnpayTransactionNo(String vnpayTransactionNo) {
+        this.vnpayTransactionNo = vnpayTransactionNo;
     }
 
     public String getNote() {
