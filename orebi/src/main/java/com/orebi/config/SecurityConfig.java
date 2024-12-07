@@ -37,6 +37,7 @@ public class SecurityConfig {
                 // Public APIs - Không cần đăng nhập
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/products/paged").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/subcategories/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/product-details/**").permitAll()
