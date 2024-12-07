@@ -38,25 +38,36 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/subcategories/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/product-details/**").permitAll()
                 .requestMatchers("/api/payment/vnpay/callback").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/payment/vnpay/create/**").permitAll()
                 .requestMatchers("/api/payment/banking/info").permitAll()
-                .requestMatchers("/api/payment/**").authenticated()
                 
                 // Admin APIs - Chỉ ADMIN mới truy cập được
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/users/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/products/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("ADMIN")
+
                 .requestMatchers(HttpMethod.POST, "/api/categories/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/categories/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasRole("ADMIN")
+
+                .requestMatchers(HttpMethod.POST, "/api/subcategories/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/subcategories/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/subcategories/**").hasRole("ADMIN")
+                
                 .requestMatchers("/api/upload/**").hasRole("ADMIN")
+                .requestMatchers("/api/payment/banking/verify/**").hasRole("ADMIN")
                 
                 // User APIs - Cần đăng nhập (USER hoặc ADMIN)
-                .requestMatchers("/api/cart/**").hasAnyRole("USER", "ADMIN")
-                .requestMatchers("/api/orders/**").hasAnyRole("USER", "ADMIN")
-                .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/api/cart/**").authenticated()
+                .requestMatchers("/api/orders/**").authenticated()
+                .requestMatchers("/api/payment/banking/upload-bill/**").authenticated()
+                .requestMatchers("/api/payment/**").authenticated()
+                .requestMatchers("/api/line-items/**").authenticated()
                 
                 // Mặc định - Yêu cầu đăng nhập
                 .anyRequest().authenticated()

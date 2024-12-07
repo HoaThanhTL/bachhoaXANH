@@ -83,6 +83,7 @@ public class OrderService {
 
     public Order createOrder(Order order) {
         order.setCreatedAt(LocalDateTime.now());
+        order.setStatus(OrderStatus.PENDING);
         order.setUpdatedAt(LocalDateTime.now());
         return orderRepository.save(order);
     }
