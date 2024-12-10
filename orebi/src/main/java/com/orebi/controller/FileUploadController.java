@@ -58,4 +58,15 @@ public class FileUploadController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @PostMapping("/product")
+    public ResponseEntity<CloudinaryUploadResponse> uploadProductImage(
+            @RequestParam("file") MultipartFile file) {
+        try {
+            CloudinaryUploadResponse response = cloudinaryService.uploadFile(file);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
 }

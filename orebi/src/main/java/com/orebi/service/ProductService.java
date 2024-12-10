@@ -42,28 +42,9 @@ public class ProductService {
             .collect(Collectors.toList());
     }
 
-    public Optional<Product> getProductById(Long id) {
-        return productRepository.findById(id);
-    }
-
-    public Product createProduct(Product product) {
-        return productRepository.save(product);
-    }
-
-    public Optional<Product> updateProduct(Long id, Product product) {
-        if (productRepository.existsById(id)) {
-            product.setProductId(id);
-            return Optional.of(productRepository.save(product));
-        }
-        return Optional.empty();
-    }
-
-    public void deleteProduct(Long id) {
-        productRepository.deleteById(id);
-    }
-
-    public List<Product> getProductsByCategory(Long categoryId) {
-        return productRepository.findByCategoryCategoryId(categoryId);
+    public Optional<ProductDTO> getProductById(Long id) {
+        return productRepository.findById(id)
+            .map(this::convertToDTO);
     }
 
     public ProductDTO createProduct(ProductDTO productDTO) {
@@ -89,21 +70,39 @@ public class ProductService {
         if (productRepository.existsById(productId)) {
             Product product = convertToEntity(productDTO);
             product.setProductId(productId);
+            
+            if (productDTO.getCategoryId() != null) {
+                Category category = categoryRepository.findById(productDTO.getCategoryId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+                product.setCategory(category);
+            }
+            
+            if (productDTO.getSubCategoryId() != null) {
+                SubCategory subCategory = subCategoryRepository.findById(productDTO.getSubCategoryId())
+                    .orElseThrow(() -> new ResourceNotFoundException("SubCategory not found"));
+                product.setSubCategory(subCategory);
+            }
+            
             Product updatedProduct = productRepository.save(product);
             return Optional.of(convertToDTO(updatedProduct));
         }
         return Optional.empty();
     }
 
-    private Product convertToEntity(ProductDTO dto) {
-        Product product = new Product();
-        product.setName(dto.getName());
-        product.setImage(dto.getImage());
-        product.setOriginalPrice(dto.getOriginalPrice());
-        product.setDiscountedPrice(dto.getDiscountedPrice());
-        product.setDiscountPercentage(dto.getDiscountPercentage());
-        product.setUnit(dto.getUnit());
-        return product;
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
+    }
+
+    public List<ProductDTO> getProductsByCategory(Long categoryId) {
+        return productRepository.findByCategoryCategoryId(categoryId).stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
+
+    public List<ProductDTO> getProductsBySubCategory(Long subCategoryId) {
+        return productRepository.findBySubCategoryId(subCategoryId).stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
     }
 
     private ProductDTO convertToDTO(Product product) {
@@ -115,11 +114,33 @@ public class ProductService {
         dto.setDiscountedPrice(product.getDiscountedPrice());
         dto.setDiscountPercentage(product.getDiscountPercentage());
         dto.setUnit(product.getUnit());
+        dto.setDescription(product.getDescription());
         if (product.getProductDetail() != null) {
             dto.setProductDetailId(product.getProductDetail().getProductDetailId());
             dto.setDescription(product.getProductDetail().getDescription());
         }
+        
+        if (product.getCategory() != null) {
+            dto.setCategoryId(product.getCategory().getCategoryId());
+        }
+        
+        if (product.getSubCategory() != null) {
+            dto.setSubCategoryId(product.getSubCategory().getSubCategoryId());
+        }
+        
         return dto;
+    }
+
+    public Product convertToEntity(ProductDTO dto) {
+        Product product = new Product();
+        product.setProductId(dto.getProductId());
+        product.setName(dto.getName());
+        product.setImage(dto.getImage());
+        product.setOriginalPrice(dto.getOriginalPrice());
+        product.setDiscountedPrice(dto.getDiscountedPrice());
+        product.setDiscountPercentage(dto.getDiscountPercentage());
+        product.setUnit(dto.getUnit());
+        return product;
     }
 
     public Map<String, Object> getProductStatistics() {
@@ -133,10 +154,6 @@ public class ProductService {
         return orderRepository.findTopSellingProducts().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
-    }
-
-    public List<Product> getProductsBySubCategory(Long subCategoryId) {
-        return productRepository.findBySubCategoryId(subCategoryId);
     }
 
     public List<ProductDTO> getAllProductsPaged(int page, int size, String keyword) {
@@ -155,7 +172,6 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    // Thêm phương thức mới để lấy tổng số sản phẩm theo từ khóa
     public long getTotalProducts(String keyword) {
         if (keyword != null && !keyword.trim().isEmpty()) {
             String searchTerm = "%" + keyword.toLowerCase() + "%";

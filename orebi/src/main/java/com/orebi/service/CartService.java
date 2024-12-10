@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.orebi.dto.OrderDTO;
+import com.orebi.dto.ProductDTO;
 import com.orebi.entity.Cart;
 import com.orebi.entity.LineItem;
 import com.orebi.entity.Order;
@@ -56,8 +57,11 @@ public class CartService {
     // Thêm sản phẩm vào giỏ hàng
     public Cart addToCart(Long productId, Integer quantity) {
         Cart cart = getCurrentUserCart();
-        Product product = productService.getProductById(productId)
+        ProductDTO productDTO = productService.getProductById(productId)
             .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+        // Chuyển đổi ProductDTO thành Product
+        Product product = productService.convertToEntity(productDTO);
 
         Optional<LineItem> existingItem = cart.getLineItems().stream()
             .filter(item -> item.getProduct().getProductId().equals(productId))
