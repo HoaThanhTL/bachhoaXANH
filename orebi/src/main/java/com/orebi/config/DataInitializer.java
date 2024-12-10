@@ -47,5 +47,15 @@ public class DataInitializer implements CommandLineRunner {
             admin.setRole(roleRepository.findByRoleName("ROLE_ADMIN").get());
             userRepository.save(admin);
         }
+
+        // Thêm mới: Tạo tài khoản user mặc định
+        if (!userRepository.findByEmail("user@example.com").isPresent()) {
+            User user = new User();
+            user.setEmail("user@example.com");
+            user.setPassword(passwordEncoder.encode("user123")); // Mã hóa mật khẩu
+            user.setName("Normal User");
+            user.setRole(roleRepository.findByRoleName("ROLE_USER").get());
+            userRepository.save(user);
+        }
     }
 }

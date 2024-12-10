@@ -8,10 +8,10 @@ public class ProductDTO {
     private double discountedPrice;
     private double discountPercentage;
     private String unit;
-    private Long productDetailId;
     private String description;
     private Long categoryId;
     private Long subCategoryId;
+    private ProductDetailDTO productDetail;
 
     // Getters and Setters
     public Long getProductId() {
@@ -70,13 +70,6 @@ public class ProductDTO {
         this.unit = unit;
     }
 
-    public Long getProductDetailId() {
-        return productDetailId;
-    }
-
-    public void setProductDetailId(Long productDetailId) {
-        this.productDetailId = productDetailId;
-    }
 
     public String getDescription() {
         return description;
@@ -100,5 +93,13 @@ public class ProductDTO {
 
     public void setSubCategoryId(Long subCategoryId) {
         this.subCategoryId = subCategoryId;
+    }
+
+    public ProductDetailDTO getProductDetail() {
+        return productDetail;
+    }
+
+    public void setProductDetail(ProductDetailDTO productDetail) {
+        this.productDetail = productDetail;
     }
 }

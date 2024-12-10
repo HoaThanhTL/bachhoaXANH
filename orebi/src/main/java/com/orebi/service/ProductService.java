@@ -115,10 +115,6 @@ public class ProductService {
         dto.setDiscountPercentage(product.getDiscountPercentage());
         dto.setUnit(product.getUnit());
         dto.setDescription(product.getDescription());
-        if (product.getProductDetail() != null) {
-            dto.setProductDetailId(product.getProductDetail().getProductDetailId());
-            dto.setDescription(product.getProductDetail().getDescription());
-        }
         
         if (product.getCategory() != null) {
             dto.setCategoryId(product.getCategory().getCategoryId());

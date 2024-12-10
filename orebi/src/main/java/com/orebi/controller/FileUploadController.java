@@ -59,8 +59,8 @@ public class FileUploadController {
         }
     }
 
-    @PostMapping("/product")
-    public ResponseEntity<CloudinaryUploadResponse> uploadProductImage(
+    @PostMapping
+    public ResponseEntity<CloudinaryUploadResponse> uploadFile(
             @RequestParam("file") MultipartFile file) {
         try {
             CloudinaryUploadResponse response = cloudinaryService.uploadFile(file);

@@ -17,15 +17,20 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.orebi.dto.ProductDetailDTO;
 import com.orebi.dto.ProductImageDTO;
+import com.orebi.entity.Product;
 import com.orebi.entity.ProductDetail;
 import com.orebi.entity.ProductImage;
 import com.orebi.service.ProductDetailService;
+import com.orebi.service.ProductService;
 
 @RestController
 @RequestMapping("/api/product-details")
 public class ProductDetailController {
     @Autowired
     private ProductDetailService productDetailService;
+
+    @Autowired
+    private ProductService productService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -56,11 +61,25 @@ public class ProductDetailController {
     @PostMapping
     public ResponseEntity<ProductDetailDTO> createProductDetail(@RequestBody ProductDetailDTO dto) {
         try {
+            // Kiểm tra product tồn tại
+            Product product = productService.convertToEntity(
+                productService.getProductById(dto.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"))
+            );
+            
+            // Kiểm tra product đã có detail chưa
+            if (productDetailService.getProductDetailByProductId(dto.getProductId()).isPresent()) {
+                throw new RuntimeException("Product detail already exists");
+            }
+
+            // Tạo mới product detail
             ProductDetail detail = convertToEntity(dto);
+            detail.setProduct(product);
+            
             ProductDetail savedDetail = productDetailService.createProductDetail(detail);
             return ResponseEntity.ok(convertToDTO(savedDetail));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ProductDetailDTO()); // hoặc trả về error message
         }
     }
 
@@ -84,7 +103,7 @@ public class ProductDetailController {
         ProductDetailDTO dto = new ProductDetailDTO();
         dto.setProductDetailId(detail.getProductDetailId());
         dto.setDescription(detail.getDescription());
-        
+        dto.setProductId(detail.getProduct().getProductId());
         try {
             // Parse JSON string to DestableData object
             ProductDetailDTO.DestableData destableData = objectMapper.readValue(
@@ -93,7 +112,7 @@ public class ProductDetailController {
             );
             dto.setDestable(destableData);
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi chuyển đổi dữ liệu destable", e);
+            throw new RuntimeException("Lỗi khi chuyển đổi dữ li���u destable", e);
         }
         
         return dto;
@@ -103,9 +122,11 @@ public class ProductDetailController {
         ProductDetail detail = new ProductDetail();
         detail.setProductDetailId(dto.getProductDetailId());
         detail.setDescription(dto.getDescription());
-        
+        detail.setProduct(productService.convertToEntity(
+            productService.getProductById(dto.getProductId())
+                .orElseThrow(() -> new RuntimeException("Product not found"))
+        ));
         try {
-            // Convert DestableData object to JSON string
             String destableJson = objectMapper.writeValueAsString(dto.getDestable());
             detail.setDestable(destableJson);
         } catch (Exception e) {

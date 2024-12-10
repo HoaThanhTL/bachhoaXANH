@@ -4,9 +4,9 @@ import java.util.List;
 
 public class ProductDetailDTO {
     private Long productDetailId;
+    private Long productId;
     private String description;
     private DestableData destable;
-    private Long productId;
     private List<ProductImageDTO> images;
 
     // Class để lưu dữ liệu bảng động
@@ -41,6 +41,14 @@ public class ProductDetailDTO {
         this.productDetailId = productDetailId;
     }
 
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -55,14 +63,6 @@ public class ProductDetailDTO {
 
     public void setDestable(DestableData destable) {
         this.destable = destable;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Long productId) {
-        this.productId = productId;
     }
 
     public List<ProductImageDTO> getImages() {

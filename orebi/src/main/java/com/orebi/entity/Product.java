@@ -21,9 +21,6 @@ public class Product {
     private double discountPercentage;
     private String unit;
     private String description;
-    @ManyToOne
-    @JoinColumn(name = "product_detail_id")
-    private ProductDetail productDetail;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -90,15 +87,6 @@ public class Product {
     public void setUnit(String unit) {
         this.unit = unit;
     }
-
-    public ProductDetail getProductDetail() {
-        return this.productDetail;
-    }
-
-    public void setProductDetail(ProductDetail productDetail) {
-        this.productDetail = productDetail;
-    }
-
     public Category getCategory() {
         return this.category;
     }

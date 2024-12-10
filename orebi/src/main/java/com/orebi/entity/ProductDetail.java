@@ -21,14 +21,14 @@ public class ProductDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productDetailId;
 
+    @OneToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
     private String description;
 
     @Column(columnDefinition = "TEXT")
     private String destable;
-
-    @OneToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
 
     @OneToMany(mappedBy = "productDetail", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> images = new ArrayList<>();
