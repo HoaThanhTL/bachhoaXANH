@@ -13,10 +13,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.orebi.dto.ProductDTO;
+import com.orebi.entity.Category;
 import com.orebi.entity.Product;
+import com.orebi.entity.SubCategory;
+import com.orebi.exception.ResourceNotFoundException;
 import com.orebi.repository.CategoryRepository;
 import com.orebi.repository.OrderRepository;
 import com.orebi.repository.ProductRepository;
+import com.orebi.repository.SubCategoryRepository;
 
 @Service
 public class ProductService {
@@ -28,6 +32,9 @@ public class ProductService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private SubCategoryRepository subCategoryRepository;
 
     public List<ProductDTO> getAllProducts() {
         return productRepository.findAll().stream()
@@ -61,6 +68,19 @@ public class ProductService {
 
     public ProductDTO createProduct(ProductDTO productDTO) {
         Product product = convertToEntity(productDTO);
+        
+        if (productDTO.getCategoryId() != null) {
+            Category category = categoryRepository.findById(productDTO.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+            product.setCategory(category);
+        }
+        
+        if (productDTO.getSubCategoryId() != null) {
+            SubCategory subCategory = subCategoryRepository.findById(productDTO.getSubCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("SubCategory not found"));
+            product.setSubCategory(subCategory);
+        }
+        
         Product savedProduct = productRepository.save(product);
         return convertToDTO(savedProduct);
     }

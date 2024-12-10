@@ -10,6 +10,8 @@ public class ProductDTO {
     private String unit;
     private Long productDetailId;
     private String description;
+    private Long categoryId;
+    private Long subCategoryId;
 
     // Getters and Setters
     public Long getProductId() {
@@ -82,5 +84,21 @@ public class ProductDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public Long getSubCategoryId() {
+        return subCategoryId;
+    }
+
+    public void setSubCategoryId(Long subCategoryId) {
+        this.subCategoryId = subCategoryId;
     }
 }
