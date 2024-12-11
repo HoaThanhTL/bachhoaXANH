@@ -41,6 +41,7 @@ public class CartService {
     private ProductService productService;
 
     // Lấy giỏ hàng hiện tại của user
+    @Transactional(readOnly = true)
     public Cart getCurrentUserCart() {
         User currentUser = userService.getCurrentUser();
         
@@ -97,10 +98,20 @@ public class CartService {
 
     // Xóa sản phẩm khỏi giỏ hàng
     public Cart removeFromCart(Long productId) {
+        // Lấy giỏ hàng hiện tại của user đang đăng nhập
         Cart cart = getCurrentUserCart();
-        cart.getLineItems().removeIf(item -> 
+        
+        // Tìm và xóa LineItem có productId tương ứng
+        boolean removed = cart.getLineItems().removeIf(item -> 
             item.getProduct().getProductId().equals(productId));
+        
+        // Kiểm tra nếu không xóa được sản phẩm nào
+        if (!removed) {
+            throw new ResourceNotFoundException("Product not found in cart");
+        }
         cart.setUpdatedAt(LocalDateTime.now());
+        
+        // Lưu giỏ hàng đã cập nhật vào database
         return cartRepository.save(cart);
     }
 
@@ -150,12 +161,13 @@ public class CartService {
                 Product product = lineItem.getProduct();
                 
                 detail.setOrder(order);
-                detail.setProductId(product.getProductId());
-                detail.setProductName(product.getName());
-                detail.setProductImage(product.getImage());
-                detail.setPrice(product.getDiscountedPrice());
                 detail.setQuantity(lineItem.getQuantity());
                 detail.setTotalLineItem(product.getDiscountedPrice() * lineItem.getQuantity());
+                
+                detail.setSnapshotProductId(product.getProductId());
+                detail.setSnapshotProductName(product.getName());
+                detail.setSnapshotProductImage(product.getImage());
+                detail.setSnapshotPrice(product.getDiscountedPrice());
                 
                 return detail;
             })
@@ -166,6 +178,57 @@ public class CartService {
             .mapToDouble(OrderDetail::getTotalLineItem)
             .sum());
 
+        return orderRepository.save(order);
+    }
+
+    public Order checkoutSelectedItems(OrderDTO orderDTO) {
+        // Lấy cart hiện tại
+        Cart cart = getCart();
+        
+        // Filter chỉ lấy những lineItem được chọn
+        List<LineItem> selectedItems = cart.getLineItems().stream()
+            .filter(item -> orderDTO.getSelectedLineItemIds()
+                .contains(item.getLineItemId()))
+            .collect(Collectors.toList());
+        
+        // Validate
+        if (selectedItems.isEmpty()) {
+            throw new IllegalArgumentException("Không tìm thấy sản phẩm được chọn");
+        }
+        
+        // Tạo order mới với selected items
+        Order order = new Order();
+        order.setUser(userService.getCurrentUser());
+        order.setOrderDate(LocalDateTime.now());
+        order.setStatus(OrderStatus.PENDING);
+        order.setPaymentMethod(orderDTO.getPaymentMethod());
+        order.setShippingAddress(orderDTO.getShippingAddress());
+        order.setPhone(orderDTO.getPhone());
+        
+        // Tính tổng tiền chỉ cho selected items
+        double totalPrice = selectedItems.stream()
+            .mapToDouble(item -> item.getProduct().getDiscountedPrice() * item.getQuantity())
+            .sum();
+        order.setTotalPrice(totalPrice);
+        
+        // Tạo order details cho selected items
+        List<OrderDetail> orderDetails = selectedItems.stream()
+            .map(item -> {
+                OrderDetail detail = new OrderDetail();
+                detail.setOrder(order);
+                detail.setQuantity(item.getQuantity());
+                detail.setTotalLineItem(item.getProduct().getDiscountedPrice() * item.getQuantity());
+                detail.setSnapshotProductId(item.getProduct().getProductId());
+                detail.setSnapshotProductName(item.getProduct().getName());
+                detail.setSnapshotProductImage(item.getProduct().getImage());
+                detail.setSnapshotPrice(item.getProduct().getDiscountedPrice());
+                return detail;
+            })
+            .collect(Collectors.toList());
+        
+        order.setOrderDetails(orderDetails);
+        
+        // Save order
         return orderRepository.save(order);
     }
 }

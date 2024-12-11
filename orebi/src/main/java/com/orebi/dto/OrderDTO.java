@@ -7,6 +7,7 @@ import com.orebi.entity.OrderStatus;
 import com.orebi.entity.PaymentMethod;
 
 public class OrderDTO {
+    private List<Long> selectedLineItemIds;
     private Long orderId;
     private LocalDateTime orderDate;
     private OrderStatus status;
@@ -84,8 +85,8 @@ public class OrderDTO {
         return isPaid;
     }
 
-    public void setPaid(boolean paid) {
-        isPaid = paid;
+    public void setPaid(boolean isPaid) {
+        this.isPaid = isPaid;
     }
 
     public String getBankTransferImage() {
@@ -142,5 +143,13 @@ public class OrderDTO {
 
     public void setOrderDetails(List<OrderDetailDTO> orderDetails) {
         this.orderDetails = orderDetails;
+    }
+
+    public List<Long> getSelectedLineItemIds() {
+        return selectedLineItemIds;
+    }
+
+    public void setSelectedLineItemIds(List<Long> selectedLineItemIds) {
+        this.selectedLineItemIds = selectedLineItemIds;
     }
 }

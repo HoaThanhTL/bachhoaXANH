@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import com.orebi.dto.OrderDTO;
 import com.orebi.dto.OrderDetailDTO;
-import com.orebi.dto.ProductSnapshotDTO;
 import com.orebi.entity.Order;
 import com.orebi.entity.OrderDetail;
 import com.orebi.entity.OrderStatus;
@@ -61,18 +60,12 @@ public class OrderService {
         OrderDetailDTO dto = new OrderDetailDTO();
         dto.setOrderDetailId(detail.getOrderDetailId());
         dto.setOrderId(detail.getOrder().getOrderId());
-        
-        // Convert product snapshot
-        ProductSnapshotDTO snapshot = new ProductSnapshotDTO();
-        snapshot.setProductId(detail.getProductId());
-        snapshot.setName(detail.getProductName());
-        snapshot.setImage(detail.getProductImage());
-        snapshot.setPrice(detail.getPrice());
-        
-        dto.setProductSnapshot(snapshot);
+        dto.setSnapshotProductId(detail.getSnapshotProductId());
+        dto.setSnapshotProductName(detail.getSnapshotProductName());
+        dto.setSnapshotProductImage(detail.getSnapshotProductImage());
+        dto.setSnapshotPrice(detail.getSnapshotPrice());
         dto.setQuantity(detail.getQuantity());
         dto.setTotalLineItem(detail.getTotalLineItem());
-        
         return dto;
     }
 

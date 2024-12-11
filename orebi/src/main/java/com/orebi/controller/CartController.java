@@ -87,6 +87,17 @@ public class CartController {
 
     @PostMapping("/checkout")
     public ResponseEntity<Order> checkout(@RequestBody OrderDTO orderDTO) {
-        return ResponseEntity.ok(cartService.checkout(orderDTO));
+        try {
+            // Validate selectedLineItemIds không được null
+            if (orderDTO.getSelectedLineItemIds() == null || 
+                orderDTO.getSelectedLineItemIds().isEmpty()) {
+                throw new IllegalArgumentException("Phải chọn ít nhất 1 sản phẩm để thanh toán");
+            }
+            
+            Order order = cartService.checkoutSelectedItems(orderDTO);
+            return ResponseEntity.ok(order);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 }

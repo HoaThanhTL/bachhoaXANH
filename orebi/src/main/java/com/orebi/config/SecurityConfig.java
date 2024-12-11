@@ -69,6 +69,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/payment/banking/upload-bill/**").authenticated()
                 .requestMatchers("/api/payment/**").authenticated()
                 .requestMatchers("/api/line-items/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/users/{id}").authenticated()
                 
                 // Mặc định - Yêu cầu đăng nhập
                 .anyRequest().authenticated()

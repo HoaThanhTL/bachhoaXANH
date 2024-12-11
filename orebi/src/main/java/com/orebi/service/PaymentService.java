@@ -3,6 +3,7 @@ package com.orebi.service;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -22,11 +23,17 @@ import com.orebi.dto.OrderDTO;
 import com.orebi.entity.Order;
 import com.orebi.entity.OrderStatus;
 import com.orebi.entity.PaymentMethod;
+import com.orebi.exception.ResourceNotFoundException;
+import com.orebi.repository.OrderRepository;
+
 @Service
 public class PaymentService {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Autowired
     private CloudinaryService cloudinaryService;
@@ -149,26 +156,22 @@ public class PaymentService {
     }
 
     public OrderDTO verifyBankTransfer(Long orderId, boolean isValid, String note) {
-        Order order = orderService.getOrderEntityById(orderId);
-        
-        if (order.getPaymentMethod() != PaymentMethod.BANKING) {
-            throw new RuntimeException("Phương thức thanh toán không hợp lệ");
-        }
-
-        if (order.getStatus() != OrderStatus.PENDING_PAYMENT) {
-            throw new RuntimeException("Trạng thái đơn hàng không hợp lệ");
-        }
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
         if (isValid) {
-            order.setStatus(OrderStatus.PENDING);
+            order.setStatus(OrderStatus.PAYMENT_SUCCESS);
             order.setIsPaid(true);
-            order.setPaymentNote("Thanh toán thành công");
+            order.setPaymentNote(note);
+            order.setUpdatedAt(LocalDateTime.now());
         } else {
             order.setStatus(OrderStatus.PAYMENT_FAILED);
-            order.setPaymentNote(note != null ? note : "Thanh toán thất bại");
+            order.setPaymentNote(note);
+            order.setUpdatedAt(LocalDateTime.now());
         }
-        
-        return orderService.saveOrder(order);
+
+        Order updatedOrder = orderRepository.save(order);
+        return convertToDTO(updatedOrder);
     }
 
     // Lấy thông tin banking
@@ -280,5 +283,24 @@ public class PaymentService {
         } catch (Exception e) {
             throw new RuntimeException("Lỗi tạo chữ ký số: " + e.getMessage());
         }
+    }
+
+    private OrderDTO convertToDTO(Order order) {
+        OrderDTO dto = new OrderDTO();
+        dto.setOrderId(order.getOrderId());
+        dto.setOrderDate(order.getOrderDate());
+        dto.setStatus(order.getStatus());
+        dto.setPaymentMethod(order.getPaymentMethod());
+        dto.setShippingAddress(order.getShippingAddress());
+        dto.setPhone(order.getPhone());
+        dto.setTotalPrice(order.getTotalPrice());
+        dto.setPaid(order.getIsPaid());
+        dto.setBankTransferImage(order.getBankTransferImage());
+        dto.setPaymentNote(order.getPaymentNote());
+        dto.setVnpayTransactionNo(order.getVnpayTransactionNo());
+        dto.setNote(order.getNote());
+        dto.setCreatedAt(order.getCreatedAt());
+        dto.setUpdatedAt(order.getUpdatedAt());
+        return dto;
     }
 }

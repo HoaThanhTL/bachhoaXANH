@@ -41,7 +41,7 @@ public class OrderDetailController {
     public ResponseEntity<List<OrderDetailDTO>> getOrderDetailsByProductId(@PathVariable Long productId) {
         List<OrderDetailDTO> details = orderService.getAllOrders().stream()
             .flatMap(order -> order.getOrderDetails().stream())
-            .filter(detail -> detail.getProductSnapshot().getProductId().equals(productId))
+            .filter(detail -> detail.getSnapshotProductId().equals(productId))
             .collect(Collectors.toList());
         
         return ResponseEntity.ok(details);

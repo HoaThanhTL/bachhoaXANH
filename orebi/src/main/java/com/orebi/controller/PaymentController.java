@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -68,9 +69,11 @@ public class PaymentController {
     @PostMapping("/banking/verify/{orderId}")
     public ResponseEntity<?> verifyBankTransfer(
             @PathVariable Long orderId,
-            @RequestParam boolean isValid,
-            @RequestParam(required = false) String note) {
+            @RequestBody Map<String, Object> request) {
         try {
+            boolean isValid = (boolean) request.get("isValid");
+            String note = request.containsKey("note") ? (String) request.get("note") : null;
+            
             OrderDTO updatedOrder = paymentService.verifyBankTransfer(orderId, isValid, note);
             return ResponseEntity.ok(updatedOrder);
         } catch (Exception e) {
