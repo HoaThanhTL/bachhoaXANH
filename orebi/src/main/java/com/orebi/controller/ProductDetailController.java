@@ -105,14 +105,26 @@ public class ProductDetailController {
         dto.setDescription(detail.getDescription());
         dto.setProductId(detail.getProduct().getProductId());
         try {
-            // Parse JSON string to DestableData object
             ProductDetailDTO.DestableData destableData = objectMapper.readValue(
                 detail.getDestable(), 
                 ProductDetailDTO.DestableData.class
             );
             dto.setDestable(destableData);
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi chuyển đổi dữ li���u destable", e);
+            throw new RuntimeException("Lỗi khi chuyển đổi dữ liệu destable", e);
+        }
+        
+        if (detail.getImages() != null) {
+            List<ProductImageDTO> imageDTOs = detail.getImages().stream()
+                .map(image -> {
+                    ProductImageDTO imageDTO = new ProductImageDTO();
+                    imageDTO.setImageId(image.getImageId());
+                    imageDTO.setImageUrl(image.getImageUrl());
+                    imageDTO.setProductDetailId(detail.getProductDetailId());
+                    return imageDTO;
+                })
+                .collect(Collectors.toList());
+            dto.setImages(imageDTOs);
         }
         
         return dto;
