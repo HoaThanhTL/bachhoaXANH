@@ -135,6 +135,7 @@ public class ProductService {
         product.setOriginalPrice(dto.getOriginalPrice());
         product.setDiscountedPrice(dto.getDiscountedPrice());
         product.setDiscountPercentage(dto.getDiscountPercentage());
+        product.setDescription(dto.getDescription());
         product.setUnit(dto.getUnit());
         return product;
     }

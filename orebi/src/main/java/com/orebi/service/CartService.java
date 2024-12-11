@@ -128,59 +128,6 @@ public class CartService {
         cartRepository.save(cart);
     }
 
-    // Chuyển từ Cart sang Order
-    public Order checkout(OrderDTO orderDTO) {
-        Cart cart = getCurrentUserCart();
-        
-        Order order = new Order();
-        order.setOrderDate(LocalDateTime.now());
-        order.setStatus(OrderStatus.PENDING);
-        order.setPaymentMethod(orderDTO.getPaymentMethod());
-        order.setShippingAddress(orderDTO.getShippingAddress());
-        order.setPhone(orderDTO.getPhone());
-        order.setNote(orderDTO.getNote());
-        order.setIsPaid(false);
-        order.setCreatedAt(LocalDateTime.now());
-        order.setUpdatedAt(LocalDateTime.now());
-
-        // Gom nhóm các sản phẩm giống nhau
-        Map<Long, LineItem> groupedItems = cart.getLineItems().stream()
-            .collect(Collectors.groupingBy(
-                item -> item.getProduct().getProductId(),
-                Collectors.reducing(null, (a, b) -> {
-                    if (a == null) return b;
-                    a.setQuantity(a.getQuantity() + b.getQuantity());
-                    return a;
-                })
-            ));
-
-        // Tạo orderDetails từ các sản phẩm đã gom nhóm
-        List<OrderDetail> orderDetails = groupedItems.values().stream()
-            .map(lineItem -> {
-                OrderDetail detail = new OrderDetail();
-                Product product = lineItem.getProduct();
-                
-                detail.setOrder(order);
-                detail.setQuantity(lineItem.getQuantity());
-                detail.setTotalLineItem(product.getDiscountedPrice() * lineItem.getQuantity());
-                
-                detail.setSnapshotProductId(product.getProductId());
-                detail.setSnapshotProductName(product.getName());
-                detail.setSnapshotProductImage(product.getImage());
-                detail.setSnapshotPrice(product.getDiscountedPrice());
-                
-                return detail;
-            })
-            .collect(Collectors.toList());
-
-        order.setOrderDetails(orderDetails);
-        order.setTotalPrice(orderDetails.stream()
-            .mapToDouble(OrderDetail::getTotalLineItem)
-            .sum());
-
-        return orderRepository.save(order);
-    }
-
     public Order checkoutSelectedItems(OrderDTO orderDTO) {
         // Lấy cart hiện tại
         Cart cart = getCart();
@@ -204,6 +151,10 @@ public class CartService {
         order.setPaymentMethod(orderDTO.getPaymentMethod());
         order.setShippingAddress(orderDTO.getShippingAddress());
         order.setPhone(orderDTO.getPhone());
+        order.setNote(orderDTO.getNote());
+        order.setIsPaid(false);
+        order.setCreatedAt(LocalDateTime.now());
+        order.setUpdatedAt(LocalDateTime.now());
         
         // Tính tổng tiền chỉ cho selected items
         double totalPrice = selectedItems.stream()
