@@ -74,7 +74,12 @@ public class PaymentController {
             boolean isValid = (boolean) request.get("isValid");
             String note = request.containsKey("note") ? (String) request.get("note") : null;
             
-            OrderDTO updatedOrder = paymentService.verifyBankTransfer(orderId, isValid, note);
+            OrderDTO orderDTO = new OrderDTO();
+            orderDTO.setOrderId(orderId);
+            orderDTO.setValid(isValid);
+            orderDTO.setNote(note);
+
+            OrderDTO updatedOrder = paymentService.verifyBankTransfer(orderDTO);
             return ResponseEntity.ok(updatedOrder);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Lỗi xác nhận thanh toán: " + e.getMessage());

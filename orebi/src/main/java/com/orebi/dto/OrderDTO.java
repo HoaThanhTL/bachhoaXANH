@@ -23,6 +23,7 @@ public class OrderDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<OrderDetailDTO> orderDetails;
+    private boolean isValid;
 
     // Getters/setters
     public Long getOrderId() {
@@ -151,5 +152,13 @@ public class OrderDTO {
 
     public void setSelectedLineItemIds(List<Long> selectedLineItemIds) {
         this.selectedLineItemIds = selectedLineItemIds;
+    }
+
+    public boolean isValid() {
+        return isValid;
+    }
+
+    public void setValid(boolean isValid) {
+        this.isValid = isValid;
     }
 }

@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,10 +21,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.orebi.Cloudinary.CloudinaryService;
 import com.orebi.dto.OrderDTO;
+import com.orebi.entity.Cart;
 import com.orebi.entity.Order;
+import com.orebi.entity.OrderDetail;
 import com.orebi.entity.OrderStatus;
 import com.orebi.entity.PaymentMethod;
 import com.orebi.exception.ResourceNotFoundException;
+import com.orebi.repository.CartRepository;
 import com.orebi.repository.OrderRepository;
 
 @Service
@@ -37,6 +41,12 @@ public class PaymentService {
 
     @Autowired
     private CloudinaryService cloudinaryService;
+
+    @Autowired
+    private CartRepository cartRepository;
+
+    @Autowired
+    private CartService cartService;
 
     @Value("${vnpay.merchant-id}")
     private String vnpayMerchantId;
@@ -155,23 +165,34 @@ public class PaymentService {
         }
     }
 
-    public OrderDTO verifyBankTransfer(Long orderId, boolean isValid, String note) {
-        Order order = orderRepository.findById(orderId)
+    public OrderDTO verifyBankTransfer(OrderDTO orderDTO) {
+        Order order = orderRepository.findById(orderDTO.getOrderId())
             .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
-        if (isValid) {
-            order.setStatus(OrderStatus.PAYMENT_SUCCESS);
+        if (orderDTO.isValid()) {
+            order.setStatus(OrderStatus.COMPLETED);
             order.setIsPaid(true);
-            order.setPaymentNote(note);
             order.setUpdatedAt(LocalDateTime.now());
+            order.setNote(orderDTO.getNote());
+
+            // Sử dụng CartService để lấy giỏ hàng hiện tại
+            Cart cart = cartService.getCurrentUserCart();
+            List<Long> paidProductIds = order.getOrderDetails().stream()
+                .map(OrderDetail::getSnapshotProductId)
+                .collect(Collectors.toList());
+
+            cart.getLineItems().removeIf(item -> 
+                paidProductIds.contains(item.getProduct().getProductId()));
+
+            cart.setUpdatedAt(LocalDateTime.now());
+            cartRepository.save(cart);
         } else {
             order.setStatus(OrderStatus.PAYMENT_FAILED);
-            order.setPaymentNote(note);
+            order.setPaymentNote(orderDTO.getNote());
             order.setUpdatedAt(LocalDateTime.now());
         }
 
-        Order updatedOrder = orderRepository.save(order);
-        return convertToDTO(updatedOrder);
+        return convertToDTO(orderRepository.save(order));
     }
 
     // Lấy thông tin banking
