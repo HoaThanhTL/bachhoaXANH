@@ -22,7 +22,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     
     Long countByOrderDateBetween(LocalDateTime startOfDay, LocalDateTime endOfDay);
     
-    @Query("SELECT SUM(o.totalPrice) FROM Order o WHERE o.status = 'DELIVERED'")
+    @Query("SELECT SUM(o.totalPrice) FROM Order o WHERE o.status = 'COMPLETED'")
     Double calculateTotalRevenue();
     
     @Query("SELECT o.status, COUNT(o) FROM Order o GROUP BY o.status")

@@ -1,8 +1,10 @@
 package com.orebi.controller;
 
+import java.net.URI;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,7 +48,14 @@ public class PaymentController {
     public ResponseEntity<?> vnpayCallback(@RequestParam Map<String, String> params) {
         try {
             paymentService.processVNPayCallback(params);
-            return ResponseEntity.ok("Thanh toán thành công");
+            
+            // Chuyển hướng đến trang thành công
+            String orderId = params.get("vnp_TxnRef");
+            String successUrl = "http://localhost:3000/payment-success?orderId=" + orderId;
+            
+            return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create(successUrl))
+                .build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Lỗi xử lý callback VNPay: " + e.getMessage());
         }
