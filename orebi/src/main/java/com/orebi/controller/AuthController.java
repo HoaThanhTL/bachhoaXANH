@@ -119,6 +119,10 @@ public class AuthController {
             if (isValid) {
                 return ResponseEntity.ok(new MessageResponse("Xác thực OTP thành công"));
             } else {
+                if (otpService.isOtpExpired(request.get("email"))) {
+                    return ResponseEntity.badRequest()
+                        .body(new MessageResponse("OTP đã hết hạn. Vui lòng yêu cầu mã OTP mới"));
+                }
                 return ResponseEntity.badRequest()
                     .body(new MessageResponse("OTP không chính xác"));
             }
