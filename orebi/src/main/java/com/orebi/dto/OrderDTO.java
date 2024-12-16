@@ -23,7 +23,11 @@ public class OrderDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<OrderDetailDTO> orderDetails;
-    private boolean isValid;
+    private String trackingNumber;
+    private double shippingFee;
+    private String recipientName;
+    private String recipientPhone;
+    private boolean valid;
 
     // Getters/setters
     public Long getOrderId() {
@@ -154,11 +158,43 @@ public class OrderDTO {
         this.selectedLineItemIds = selectedLineItemIds;
     }
 
-    public boolean isValid() {
-        return isValid;
+    public String getTrackingNumber() {
+        return trackingNumber;
     }
 
-    public void setValid(boolean isValid) {
-        this.isValid = isValid;
+    public void setTrackingNumber(String trackingNumber) {
+        this.trackingNumber = trackingNumber;
+    }
+
+    public double getShippingFee() {
+        return shippingFee;
+    }
+
+    public void setShippingFee(double shippingFee) {
+        this.shippingFee = shippingFee;
+    }
+
+    public String getRecipientName() {
+        return recipientName;
+    }
+
+    public void setRecipientName(String recipientName) {
+        this.recipientName = recipientName;
+    }
+
+    public String getRecipientPhone() {
+        return recipientPhone;
+    }
+
+    public void setRecipientPhone(String recipientPhone) {
+        this.recipientPhone = recipientPhone;
+    }
+
+    public boolean isValid() {
+        return valid;
+    }
+
+    public void setValid(boolean valid) {
+        this.valid = valid;
     }
 }

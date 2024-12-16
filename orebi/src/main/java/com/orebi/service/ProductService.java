@@ -2,14 +2,12 @@ package com.orebi.service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.orebi.dto.ProductDTO;
@@ -153,28 +151,18 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public List<ProductDTO> getAllProductsPaged(int page, int size, String keyword) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Product> productPage;
+    public List<ProductDTO> searchProducts(String keyword) {
+        List<Product> products;
         
         if (keyword != null && !keyword.trim().isEmpty()) {
-            String searchTerm = "%" + keyword.toLowerCase() + "%";
-            productPage = productRepository.findByNameContainingIgnoreCase(searchTerm, pageable);
+            products = productRepository.findByNameContainingIgnoreCase(keyword.toLowerCase(Locale.forLanguageTag("vi")));
         } else {
-            productPage = productRepository.findAll(pageable);
+            products = productRepository.findAll();
         }
         
-        return productPage.getContent().stream()
+        return products.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
-    }
-
-    public long getTotalProducts(String keyword) {
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            String searchTerm = "%" + keyword.toLowerCase() + "%";
-            return productRepository.findByNameContainingIgnoreCase(searchTerm, Pageable.unpaged()).getTotalElements();
-        }
-        return productRepository.count();
     }
 }
 

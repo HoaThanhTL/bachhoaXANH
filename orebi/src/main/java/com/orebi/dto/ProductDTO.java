@@ -11,7 +11,6 @@ public class ProductDTO {
     private String description;
     private Long categoryId;
     private Long subCategoryId;
-    private ProductDetailDTO productDetail;
 
     // Getters and Setters
     public Long getProductId() {
@@ -93,13 +92,5 @@ public class ProductDTO {
 
     public void setSubCategoryId(Long subCategoryId) {
         this.subCategoryId = subCategoryId;
-    }
-
-    public ProductDetailDTO getProductDetail() {
-        return productDetail;
-    }
-
-    public void setProductDetail(ProductDetailDTO productDetail) {
-        this.productDetail = productDetail;
     }
 }

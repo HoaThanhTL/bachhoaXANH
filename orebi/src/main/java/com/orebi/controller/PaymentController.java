@@ -1,6 +1,7 @@
 package com.orebi.controller;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.orebi.dto.OrderDTO;
-import com.orebi.service.OrderService;
+import com.orebi.entity.OrderStatus;
 import com.orebi.service.PaymentService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,9 +28,6 @@ public class PaymentController {
 
     @Autowired
     private PaymentService paymentService;
-
-    @Autowired
-    private OrderService orderService;
 
     // Xử lý thanh toán VNPay
     @PostMapping("/vnpay/create/{orderId}")
@@ -81,12 +79,14 @@ public class PaymentController {
             @RequestBody Map<String, Object> request) {
         try {
             boolean isValid = (boolean) request.get("isValid");
-            String note = request.containsKey("note") ? (String) request.get("note") : null;
+            String note = isValid ? "Thanh toán thành công" : "Thanh toán thất bại";
             
             OrderDTO orderDTO = new OrderDTO();
             orderDTO.setOrderId(orderId);
             orderDTO.setValid(isValid);
+            orderDTO.setStatus(OrderStatus.PAYMENT_SUCCESS);
             orderDTO.setNote(note);
+            orderDTO.setUpdatedAt(LocalDateTime.now());
 
             OrderDTO updatedOrder = paymentService.verifyBankTransfer(orderDTO);
             return ResponseEntity.ok(updatedOrder);

@@ -43,6 +43,11 @@ public class Order {
     private String phone;
     private double totalPrice;
     private boolean isPaid;
+
+    private String trackingNumber;    // Mã vận đơn
+    private double shippingFee;       // Phí giao hàng
+    private String recipientName;     // Tên người nhận
+    private String recipientPhone;    // Số điện thoại người nhận
     
     @Column(columnDefinition = "TEXT")
     private String bankTransferImage;
@@ -107,4 +112,17 @@ public class Order {
     
     public String getVnpayTransactionNo() { return vnpayTransactionNo; }
     public void setVnpayTransactionNo(String vnpayTransactionNo) { this.vnpayTransactionNo = vnpayTransactionNo; }
+
+    public String getTrackingNumber() { return trackingNumber; }
+    public void setTrackingNumber(String trackingNumber) { this.trackingNumber = trackingNumber; }
+
+    public double getShippingFee() { return shippingFee; }
+    public void setShippingFee(double shippingFee) { this.shippingFee = shippingFee; }
+
+    public String getRecipientName() { return recipientName; }
+    public void setRecipientName(String recipientName) { this.recipientName = recipientName; }  
+
+    public String getRecipientPhone() { return recipientPhone; }
+    public void setRecipientPhone(String recipientPhone) { this.recipientPhone = recipientPhone; }
+
 }

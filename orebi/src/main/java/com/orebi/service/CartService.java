@@ -3,7 +3,6 @@ package com.orebi.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -18,6 +17,7 @@ import com.orebi.entity.LineItem;
 import com.orebi.entity.Order;
 import com.orebi.entity.OrderDetail;
 import com.orebi.entity.OrderStatus;
+import com.orebi.entity.PaymentMethod;
 import com.orebi.entity.Product;
 import com.orebi.entity.User;
 import com.orebi.exception.ResourceNotFoundException;
@@ -147,7 +147,6 @@ public class CartService {
         Order order = new Order();
         order.setUser(userService.getCurrentUser());
         order.setOrderDate(LocalDateTime.now());
-        order.setStatus(OrderStatus.PENDING);
         order.setPaymentMethod(orderDTO.getPaymentMethod());
         order.setShippingAddress(orderDTO.getShippingAddress());
         order.setPhone(orderDTO.getPhone());
@@ -155,7 +154,13 @@ public class CartService {
         order.setIsPaid(false);
         order.setCreatedAt(LocalDateTime.now());
         order.setUpdatedAt(LocalDateTime.now());
-        
+
+        if (orderDTO.getPaymentMethod() == PaymentMethod.COD || orderDTO.getPaymentMethod() == PaymentMethod.BANKING) {
+            order.setStatus(OrderStatus.PENDING);
+        } else {
+            order.setStatus(OrderStatus.PENDING_PAYMENT);
+        }
+
         // Tính tổng tiền chỉ cho selected items
         double totalPrice = selectedItems.stream()
             .mapToDouble(item -> item.getProduct().getDiscountedPrice() * item.getQuantity())

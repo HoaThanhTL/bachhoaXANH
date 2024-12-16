@@ -77,8 +77,8 @@ public class PaymentService {
             throw new RuntimeException("Phương thức thanh toán không hợp lệ");
         }
 
-        if (order.getStatus() == OrderStatus.PENDING) {
-            throw new RuntimeException("Đơn hàng chưa được xác nhận");
+        if (order.getStatus() == OrderStatus.PAYMENT_SUCCESS) {
+            throw new RuntimeException("Đơn hàng đã được thanh toán");
         }
 
         if (order.getStatus() == OrderStatus.CANCELLED) {
@@ -86,7 +86,7 @@ public class PaymentService {
         }
 
         if (order.getIsPaid() || order.getStatus() == OrderStatus.COMPLETED) {
-            throw new RuntimeException("Đơn hàng đã được thanh toán");
+            throw new RuntimeException("Đơn hàng đã hoàn thành");
         }
 
         Map<String, String> vnp_Params = new HashMap<>();
@@ -124,7 +124,7 @@ public class PaymentService {
 
 
         if ("00".equals(responseCode)) {
-            order.setStatus(OrderStatus.COMPLETED);
+            order.setStatus(OrderStatus.PAYMENT_SUCCESS);
             order.setIsPaid(true);
             order.setPaymentNote(String.format(
                 "Thanh toán thành công qua %s vào lúc %s", 

@@ -16,12 +16,16 @@ import com.orebi.dto.OrderDetailDTO;
 import com.orebi.entity.Order;
 import com.orebi.entity.OrderDetail;
 import com.orebi.entity.OrderStatus;
+import com.orebi.entity.User;
 import com.orebi.repository.OrderRepository;
 
 @Service
 public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private UserService userService;
 
     public List<OrderDTO> getAllOrders() {
         return orderRepository.findAll().stream()
@@ -97,9 +101,16 @@ public class OrderService {
     }
 
     public List<OrderDTO> getOrdersByStatus(OrderStatus status) {
-        return orderRepository.findByStatus(status).stream()
+        User user = userService.getCurrentUser();
+        if(user.getRole().getRoleName().equals("ROLE_ADMIN")) {
+            return orderRepository.findByStatus(status).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        } else {
+            return orderRepository.findByStatusAndUser_UserId(status, user.getUserId()).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
+        }
     }
 
     // Thống kê
@@ -112,7 +123,7 @@ public class OrderService {
     }
 
     public Long countOrdersByDate(String dateStr) {
-        LocalDate date = LocalDate.parse(dateStr); // Format: yyyy-MM-dd
+        LocalDate date = LocalDate.parse(dateStr); 
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(23, 59, 59);
         return orderRepository.countByOrderDateBetween(startOfDay, endOfDay);

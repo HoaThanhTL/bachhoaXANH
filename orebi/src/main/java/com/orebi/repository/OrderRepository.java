@@ -15,6 +15,7 @@ import com.orebi.entity.Product;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByUser_UserIdOrderByOrderDateDesc(Long userId);
+    List<Order> findByStatusAndUser_UserId(OrderStatus status, Long userId);
     List<Order> findByStatus(OrderStatus status);
     
     @Query("SELECT SUM(o.totalPrice) FROM Order o")

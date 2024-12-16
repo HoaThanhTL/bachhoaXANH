@@ -1,8 +1,6 @@
 package com.orebi.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -66,28 +64,13 @@ public class ProductController {
         return productService.getProductsBySubCategory(subCategoryId);
     }
 
-    @GetMapping("/paged")
-    public ResponseEntity<Map<String, Object>> getAllProductsPaged(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String keyword) {
+    @GetMapping("/search")
+    public ResponseEntity<List<ProductDTO>> searchProducts(@RequestParam(required = false) String keyword) {
         try {
-            List<ProductDTO> products = productService.getAllProductsPaged(page, size, keyword);
-            long totalItems = productService.getTotalProducts(keyword);
-            int totalPages = (int) Math.ceil((double) totalItems / size);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("products", products);
-            response.put("currentPage", page);
-            response.put("totalItems", totalItems);
-            response.put("totalPages", totalPages);
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                response.put("keyword", keyword);
-            }
-
-            return ResponseEntity.ok(response);
+            List<ProductDTO> products = productService.searchProducts(keyword);
+            return ResponseEntity.ok(products);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-    }   
+    }
 }
