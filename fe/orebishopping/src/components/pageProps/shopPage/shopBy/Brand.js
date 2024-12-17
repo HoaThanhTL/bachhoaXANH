@@ -7,23 +7,23 @@ const Brand = () => {
   const brands = [
     {
       _id: 9006,
-      title: "Apple",
+      title: "VinaMilk",
     },
     {
       _id: 9007,
-      title: "Ultron",
+      title: "Nestlé",
     },
     {
       _id: 9008,
-      title: "Unknown",
+      title: "PepsiCo",
     },
     {
       _id: 9009,
-      title: "Shoppers Home",
+      title: "Tường An",
     },
     {
       _id: 9010,
-      title: "Hoichoi",
+      title: "TH TrueMilk",
     },
   ];
 
@@ -33,7 +33,7 @@ const Brand = () => {
         onClick={() => setShowBrands(!showBrands)}
         className="cursor-pointer"
       >
-        <NavTitle title="Shop by Brand" icons={true} />
+        <NavTitle title="Thương hiệu" icons={true} />
       </div>
       {showBrands && (
         <motion.div

@@ -14,17 +14,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.orebi.dto.ProductDetailDTO;
 import com.orebi.dto.ProductImageDTO;
+import com.orebi.entity.Product;
 import com.orebi.entity.ProductDetail;
 import com.orebi.entity.ProductImage;
 import com.orebi.service.ProductDetailService;
+import com.orebi.service.ProductService;
 
 @RestController
 @RequestMapping("/api/product-details")
 public class ProductDetailController {
     @Autowired
     private ProductDetailService productDetailService;
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @GetMapping
     public List<ProductDetailDTO> getAllProductDetails() {
@@ -50,17 +59,35 @@ public class ProductDetailController {
     }
 
     @PostMapping
-    public ProductDetailDTO createProductDetail(@RequestBody ProductDetailDTO productDetailDTO) {
-        ProductDetail productDetail = convertToEntity(productDetailDTO);
-        ProductDetail createdProductDetail = productDetailService.createProductDetail(productDetail);
-        return convertToDTO(createdProductDetail);
+    public ResponseEntity<ProductDetailDTO> createProductDetail(@RequestBody ProductDetailDTO dto) {
+        try {
+            // Kiểm tra product tồn tại
+            Product product = productService.convertToEntity(
+                productService.getProductById(dto.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"))
+            );
+            
+            // Kiểm tra product đã có detail chưa
+            if (productDetailService.getProductDetailByProductId(dto.getProductId()).isPresent()) {
+                throw new RuntimeException("Product detail already exists");
+            }
+
+            // Tạo mới product detail
+            ProductDetail detail = convertToEntity(dto);
+            detail.setProduct(product);
+            
+            ProductDetail savedDetail = productDetailService.createProductDetail(detail);
+            return ResponseEntity.ok(convertToDTO(savedDetail));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ProductDetailDTO()); // hoặc trả về error message
+        }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductDetailDTO> updateProductDetail(
-            @PathVariable Long id,
-            @RequestBody ProductDetailDTO productDetailDTO) {
-        return productDetailService.updateProductDetail(id, convertToEntity(productDetailDTO))
+            @PathVariable Long id, 
+            @RequestBody ProductDetailDTO dto) {
+        return productDetailService.updateProductDetail(id, convertToEntity(dto))
                 .map(this::convertToDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -72,22 +99,53 @@ public class ProductDetailController {
         return ResponseEntity.noContent().build();
     }
 
-    private ProductDetailDTO convertToDTO(ProductDetail productDetail) {
+    private ProductDetailDTO convertToDTO(ProductDetail detail) {
         ProductDetailDTO dto = new ProductDetailDTO();
-        dto.setProductDetailId(productDetail.getProductDetailId());
-        dto.setDescription(productDetail.getDescription());
-        dto.setDestable(productDetail.getDestable());
-        if (productDetail.getProduct() != null) {
-            dto.setProductId(productDetail.getProduct().getProductId());
+        dto.setProductDetailId(detail.getProductDetailId());
+        dto.setDescription(detail.getDescription());
+        dto.setProductId(detail.getProduct().getProductId());
+        try {
+            ProductDetailDTO.DestableData destableData = objectMapper.readValue(
+                detail.getDestable(), 
+                ProductDetailDTO.DestableData.class
+            );
+            dto.setDestable(destableData);
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi chuyển đổi dữ liệu destable", e);
         }
         
-        // Convert images
-        if (productDetail.getImages() != null) {
-            dto.setImages(productDetail.getImages().stream()
-                .map(this::convertImageToDTO)
-                .collect(Collectors.toList()));
+        if (detail.getImages() != null) {
+            List<ProductImageDTO> imageDTOs = detail.getImages().stream()
+                .map(image -> {
+                    ProductImageDTO imageDTO = new ProductImageDTO();
+                    imageDTO.setImageId(image.getImageId());
+                    imageDTO.setImageUrl(image.getImageUrl());
+                    imageDTO.setProductDetailId(detail.getProductDetailId());
+                    return imageDTO;
+                })
+                .collect(Collectors.toList());
+            dto.setImages(imageDTOs);
         }
+        
         return dto;
+    }
+
+    private ProductDetail convertToEntity(ProductDetailDTO dto) {
+        ProductDetail detail = new ProductDetail();
+        detail.setProductDetailId(dto.getProductDetailId());
+        detail.setDescription(dto.getDescription());
+        detail.setProduct(productService.convertToEntity(
+            productService.getProductById(dto.getProductId())
+                .orElseThrow(() -> new RuntimeException("Product not found"))
+        ));
+        try {
+            String destableJson = objectMapper.writeValueAsString(dto.getDestable());
+            detail.setDestable(destableJson);
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi chuyển đổi dữ liệu destable", e);
+        }
+        
+        return detail;
     }
 
     private ProductImageDTO convertImageToDTO(ProductImage image) {
@@ -96,14 +154,5 @@ public class ProductDetailController {
         dto.setImageUrl(image.getImageUrl());
         dto.setProductDetailId(image.getProductDetail().getProductDetailId());
         return dto;
-    }
-
-    private ProductDetail convertToEntity(ProductDetailDTO dto) {
-        ProductDetail productDetail = new ProductDetail();
-        productDetail.setProductDetailId(dto.getProductDetailId());
-        productDetail.setDescription(dto.getDescription());
-        productDetail.setDestable(dto.getDestable());
-        // Product entity sẽ được set trong service layer
-        return productDetail;
     }
 } 

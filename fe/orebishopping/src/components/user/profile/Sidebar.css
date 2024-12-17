@@ -1,23 +1,38 @@
-/* src/components/user/profile/Sidebar/Sidebar.css */
+/* Sidebar tổng thể */
 .sidebar-container {
-    padding: 20px;
-    background-color: #f4f4f4;
-    border-radius: 8px;
-  }
-  
-  .sidebar-list {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .sidebar-list li {
-    padding: 10px;
-    cursor: pointer;
-    font-size: 18px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .sidebar-list li:hover {
-    background-color: #ddd;
-  }
-  
+  width: 250px; /* Chiều rộng cố định */
+  background-color: rgb(228, 245, 231);
+  border-right: 1px solid #ddd;
+  padding: 20px 0;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Danh sách menu */
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Từng mục trong menu */
+.sidebar-menu li {
+  padding: 15px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #333;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent; /* Hiệu ứng viền trái */
+}
+
+/* Hiệu ứng hover */
+.sidebar-menu li:hover {
+  background-color: #e0e0e0;
+  color: #9de6b5;
+}
+
+/* Mục đang chọn */
+.sidebar-menu li.active {
+  background-color: rgb(0 136 72);
+  color: white;
+  border-left: 4px solid rgb(0 136 72);
+}

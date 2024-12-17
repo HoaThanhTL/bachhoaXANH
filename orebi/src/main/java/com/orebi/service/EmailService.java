@@ -40,7 +40,7 @@ public class EmailService {
                 </div>
                 """, otp);
                 
-            helper.setText(content, true); // true để gửi dưới dạng HTML
+            helper.setText(content, true); 
             
             mailSender.send(message);
         } catch (Exception e) {
@@ -57,16 +57,49 @@ public class EmailService {
             helper.setTo(toEmail);
             helper.setSubject("Đặt lại mật khẩu");
             
-            String emailContent = String.format(
-                "Xin chào,<br><br>" +
-                "Bạn đã yêu cầu đặt lại mật khẩu. Vui lòng click vào link bên dưới để đặt lại mật khẩu:<br><br>" +
-                "<a href='%s'>Đặt lại mật khẩu</a><br><br>" +
-                "Link này sẽ hết hạn sau 30 phút.<br><br>" +
-                "Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.",
-                resetLink
-            );
+            String emailContent = String.format("""
+                <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; background-color: #f9fafb;">
+                    <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <h2 style="color: #374151; margin-bottom: 20px;">Đặt lại mật khẩu</h2>
+                        
+                        <p style="color: #4b5563; line-height: 1.6;">Xin chào,</p>
+                        
+                        <p style="color: #4b5563; line-height: 1.6;">
+                            Bạn đã yêu cầu đặt lại mật khẩu. Vui lòng click vào nút bên dưới để đặt lại mật khẩu:
+                        </p>
+                        
+                        <div style="text-align: center; margin: 30px 0;">
+                            <a href="%s" 
+                               style="background-color: #4f46e5; 
+                                      color: white; 
+                                      padding: 12px 24px; 
+                                      text-decoration: none; 
+                                      border-radius: 6px;
+                                      font-weight: bold;
+                                      display: inline-block;">
+                                Đặt lại mật khẩu
+                            </a>
+                        </div>
+                        
+                        <p style="color: #4b5563; line-height: 1.6;">
+                            Link này sẽ hết hạn sau 30 phút.
+                        </p>
+                        
+                        <p style="color: #4b5563; line-height: 1.6;">
+                            Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.
+                        </p>
+                        
+                        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+                        
+                        <p style="color: #6b7280; font-size: 14px; text-align: center;">
+                            Email này được gửi tự động từ hệ thống Orebi. Vui lòng không trả lời email này.
+                        </p>
+                    </div>
+                </div>
+                """, resetLink);
+                
+            helper.setText(emailContent, true); // true để gửi dưới dạng HTML
             
-            helper.setText(emailContent, true);
             mailSender.send(message);
         } catch (Exception e) {
             throw new RuntimeException("Không thể gửi email: " + e.getMessage());

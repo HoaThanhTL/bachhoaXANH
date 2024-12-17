@@ -1,0 +1,42 @@
+/* AdminHeader.css */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: radial-gradient(159.85% 367.97% at 150% 123.85%, #ffe147 0%, #65ae17 38.76%, #469c4b 59.65%, #00713b 100%); /* Màu nền gradient */
+    color: white;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+  
+  .header-left h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .header-right {
+    display: flex;
+    align-items: center;
+  }
+  
+  .header-right .notifications,
+  .header-right .user-profile {
+    margin-left: 20px;
+    cursor: pointer;
+  }
+  
+  .header-right .notifications:hover,
+  .header-right .user-profile:hover {
+    opacity: 0.7;
+  }
+  
+  .header-right .notifications svg,
+  .header-right .user-profile svg {
+    color: white;
+  }
+  

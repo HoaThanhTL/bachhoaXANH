@@ -69,11 +69,10 @@ const ProductDetails = () => {
       }
     };
 
-    fetchProductInfo();  // Gọi hàm lấy dữ liệu khi component render
+    fetchProductInfo();  
 
-  }, [_id]);  // Chạy lại khi _id thay đổi
+  }, [_id]);  
 
-  // Nếu chưa có dữ liệu, có thể trả về một loading spinner hoặc thông báo
   if (!productInfo) {
     return <div>Loading...</div>;
   }

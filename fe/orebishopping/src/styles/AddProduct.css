@@ -1,0 +1,111 @@
+.add-product-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .step-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .step-indicator div {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .step-indicator .active {
+    background-color: #4caf50;
+    color: #fff;
+  }
+  
+  .form-container h2 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: #333;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+  }
+  
+  .form-group textarea {
+    height: 80px;
+  }
+  
+  .table-container {
+    margin-top: 20px;
+  }
+  
+  .table-container table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table-container th,
+  .table-container td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .table-container th {
+    background-color: #f4f4f4;
+  }
+  
+  .table-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .table-controls button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    background-color: #4caf50;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  .table-controls button:hover {
+    background-color: #45a049;
+  }
+  
+  .remove-btn {
+    margin-left: 10px;
+    background: none;
+    border: none;
+    color: red;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .remove-btn:hover {
+    text-decoration: underline;
+  }
+  

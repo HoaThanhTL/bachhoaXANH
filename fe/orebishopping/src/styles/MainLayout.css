@@ -1,0 +1,80 @@
+/* MainLayout.css */
+.admin-layout {
+  display: flex;
+  height: 100vh; /* Đảm bảo trang chiếm toàn bộ chiều cao của màn hình */
+  flex-direction: column;
+  background-color: rgb(233, 237, 240); /* Màu nền */
+}
+
+.admin-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: #34495e; /* Màu nền cho header */
+  padding: 15px;
+  height: 60px; /* Chiều cao header */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-size: 20px;
+}
+
+.main-content {
+  display: flex;
+  margin-top: 60px; /* Đảm bảo không bị che bởi header */
+  flex: 1;
+  padding-bottom: 20px; /* Đảm bảo có không gian cho nội dung dưới cùng */
+}
+
+.sidebar {
+  width: 250px; /* Chiều rộng của sidebar */
+  background-color: #2c3e50;
+  height: 100vh; /* Sidebar cần kéo dài hết chiều cao */
+  position: fixed;
+  top: 60px; /* Sidebar sẽ bắt đầu từ dưới header */
+  z-index: 500;
+  transition: width 0.3s ease; /* Tạo hiệu ứng khi thu gọn sidebar */
+}
+
+.sidebar.collapsed {
+  width: 60px; /* Khi sidebar thu gọn */
+}
+
+.sidebar ul {
+  padding: 0;
+  list-style-type: none;
+}
+
+.sidebar li {
+  padding: 10px;
+}
+
+.sidebar a {
+  color: white;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+}
+
+.content-area {
+  flex: 1;
+  margin-left: 250px; /* Khoảng cách cho sidebar */
+  padding: 20px;
+  overflow-y: auto; /* Nếu nội dung dài, có thể cuộn */
+  background-color: rgb(233, 237, 240); /* Đảm bảo nền của content area giống nền chung */
+}
+
+/* Khi sidebar bị thu gọn */
+.content-area.collapsed {
+  margin-left: 60px; /* Điều chỉnh lại khi sidebar thu gọn */
+}
+
+/* Đảm bảo nội dung kéo dài hết chiều cao của trang */
+.html, body {
+  height: 100%; /* Đảm bảo chiều cao 100% cho html và body */
+  margin: 0; /* Xóa margin mặc định */
+}

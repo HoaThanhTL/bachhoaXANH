@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom"; // Thêm useNavigate
+import "./Account.css";
 import axios from "axios";
 
 const ResetPassword = () => {
   const { token } = useParams();
+  const navigate = useNavigate(); // Khai báo useNavigate
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -30,6 +32,11 @@ const ResetPassword = () => {
       });
       setMessage(response.data.message);
       setError("");
+
+      // Chuyển hướng về trang đăng nhập sau khi reset mật khẩu thành công
+      setTimeout(() => {
+        navigate("/signin"); // Điều hướng đến trang đăng nhập
+      }, 1500); // Delay 1.5s để người dùng có thể xem thông báo thành công
     } catch (err) {
       setMessage("");
       setError(err.response.data.message);

@@ -1,12 +1,16 @@
 package com.orebi.controller;
 
-import com.orebi.entity.User;
-import com.orebi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.orebi.entity.User;
+import com.orebi.service.UserService;
 
 @RestController
 @RequestMapping("/api/users")
@@ -14,33 +18,40 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @GetMapping("/current")
+    public ResponseEntity<User> getCurrentUser() {
+        User currentUser = userService.getCurrentUser();
+        return ResponseEntity.ok(currentUser);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return userService.getUserById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
+    @PutMapping("/current")
+    public ResponseEntity<User> updateCurrentUser(@RequestBody User user) {
+        // Lấy thông tin người dùng hiện tại
+        User currentUser = userService.getCurrentUser();
 
-    @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
-    }
+        // Cập nhật thông tin người dùng nếu có giá trị mới
+        if (user.getName() != null) {
+            currentUser.setName(user.getName());
+        }
+        if (user.getEmail() != null) {
+            currentUser.setEmail(user.getEmail());
+        }
+        if (user.getPhone() != null) {
+            currentUser.setPhone(user.getPhone());
+        }
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            currentUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        if (user.getAddress() != null) {
+            currentUser.setAddress(user.getAddress());
+        }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        return userService.updateUser(id, user)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
+        // Lưu thông tin đã cập nhật
+        userService.updateUser(currentUser.getUserId(), currentUser);
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(currentUser);
     }
 }

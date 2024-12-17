@@ -20,10 +20,7 @@ public class Product {
     private double discountedPrice;
     private double discountPercentage;
     private String unit;
-
-    @ManyToOne
-    @JoinColumn(name = "product_detail_id")
-    private ProductDetail productDetail;
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -90,15 +87,6 @@ public class Product {
     public void setUnit(String unit) {
         this.unit = unit;
     }
-
-    public ProductDetail getProductDetail() {
-        return this.productDetail;
-    }
-
-    public void setProductDetail(ProductDetail productDetail) {
-        this.productDetail = productDetail;
-    }
-
     public Category getCategory() {
         return this.category;
     }
@@ -113,6 +101,18 @@ public class Product {
 
     public void setSubCategory(SubCategory subCategory) {
         this.subCategory = subCategory;
+    }
+
+    // Thêm method để lấy giá cuối cùng của sản phẩm
+    public double getPrice() {
+        return discountedPrice > 0 ? discountedPrice : originalPrice;
+    }
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 }

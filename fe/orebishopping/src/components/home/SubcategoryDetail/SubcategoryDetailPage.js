@@ -6,7 +6,7 @@ import SampleNextArrow from "../NewArrivals/SampleNextArrow";
 import SamplePrevArrow from "../NewArrivals/SamplePrevArrow";
 
 const SubcategoryDetailPage = () => {
-  const { subCategoryId } = useParams(); // Lấy subCategoryId từ URL
+  const { subCategoryId } = useParams();
   const [products, setProducts] = useState([]);
   const [subcategoryName, setSubcategoryName] = useState("");
 
@@ -15,7 +15,7 @@ const SubcategoryDetailPage = () => {
       try {
         const response = await fetch(`http://127.0.0.1:8080/api/products/subcategory/${subCategoryId}`);
         const data = await response.json();
-        setProducts(data); // Cập nhật sản phẩm
+        setProducts(data); 
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -25,7 +25,7 @@ const SubcategoryDetailPage = () => {
       try {
         const response = await fetch(`http://127.0.0.1:8080/api/subcategories/${subCategoryId}`);
         const data = await response.json();
-        setSubcategoryName(data.name); // Cập nhật tên subcategory
+        setSubcategoryName(data.name); 
       } catch (error) {
         console.error("Error fetching subcategory:", error);
       }

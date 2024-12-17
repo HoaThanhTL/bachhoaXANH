@@ -1,0 +1,52 @@
+/* Nút "Mua" */
+.buy-button {
+    background-color: rgb(228, 245, 231); /* Màu nền */
+    color: rgb(0 136 72); /* Màu chữ */
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px;
+    text-align: center;
+    width: 100%;
+    border: none;
+    border-radius: 0; /* Không có viền ngoài */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Các nút tăng giảm số lượng + và - */
+  .quantity-btn {
+    background-color: rgb(228, 245, 231); /* Màu nền */
+    color: rgb(0 136 72); /* Màu chữ */
+    width: 40px; /* Kích thước nút */
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    border-radius: 0; /* Đảm bảo nút vuông */
+  }
+  
+  /* Input số lượng */
+  .quantity-input {
+    width: 60px;
+    text-align: center;
+    font-size: 16px;
+    border: 1px solid rgb(200 200 200);
+    border-radius: 0; /* Đảm bảo input vuông */
+    padding: 10px;
+    margin: 0 5px;
+    background-color: rgb(255 255 255);
+  }
+  
+  /* Flex container cho số lượng */
+  .quantity-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 0;
+  }
+  

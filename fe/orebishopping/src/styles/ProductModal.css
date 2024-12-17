@@ -1,0 +1,99 @@
+/* Product Modal Styles */
+
+/* Specific Modal Content Styling */
+.product-modal .modal-content {
+  border-radius: 10px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.product-modal .modal-title {
+  font-size: 1.75rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.product-modal .modal-body {
+  padding: 2rem;
+}
+
+/* Container Styling */
+.product-modal .left-section,
+.product-modal .right-section {
+  padding: 1rem;
+}
+
+/* Left Section */
+.product-modal .left-section {
+  text-align: center;
+}
+
+.product-modal .product-carousel-img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+/* Carousel Styling */
+.product-modal .carousel-item img {
+  display: block;
+  margin: 0 auto;
+  max-height: 400px;
+  object-fit: cover;
+}
+
+/* Right Section */
+.product-modal .right-section {
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  padding: 1.5rem;
+  text-align: left; /* Align text to the left */
+}
+
+.product-modal .right-section h5 {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  color: #333;
+}
+
+.product-modal .right-section p {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  text-align: left; /* Align text to the left */
+}
+
+/* Table Styling */
+.product-modal table {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  width: 100%;
+  border: 1px solid #ddd;
+}
+
+.product-modal thead th {
+  background-color: #f1f1f1;
+  text-align: center;
+  font-weight: bold;
+}
+
+.product-modal tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Error Message */
+.product-modal .error-message {
+  color: red;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Footer Styling */
+.product-modal .modal-footer {
+  justify-content: center;
+}
+
+.product-modal button {
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+}

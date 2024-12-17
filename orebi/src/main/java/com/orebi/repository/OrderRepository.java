@@ -1,5 +1,6 @@
 package com.orebi.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -8,14 +9,25 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.orebi.entity.Order;
+import com.orebi.entity.OrderStatus;
 import com.orebi.entity.Product;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
+    List<Order> findByUser_UserIdOrderByOrderDateDesc(Long userId);
+    List<Order> findByStatusAndUser_UserId(OrderStatus status, Long userId);
+    List<Order> findByStatus(OrderStatus status);
+    
     @Query("SELECT SUM(o.totalPrice) FROM Order o")
     Double sumTotalPrice();
     
-    Long countByDateStartsWith(String date);
+    Long countByOrderDateBetween(LocalDateTime startOfDay, LocalDateTime endOfDay);
+    
+    @Query("SELECT SUM(o.totalPrice) FROM Order o WHERE o.status = 'COMPLETED'")
+    Double calculateTotalRevenue();
+    
+    @Query("SELECT o.status, COUNT(o) FROM Order o GROUP BY o.status")
+    List<Object[]> countByStatus();
     
     @Query(value = """
         SELECT c.name as category, COUNT(od.order_id) as orderCount, 
