@@ -25,6 +25,9 @@ public class OtpService {
         User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy người dùng"));
 
+        // Xóa OTP cũ nếu có
+        clearExpiredOtp(email);
+
         // Tạo OTP ngẫu nhiên 6 số
         String otp = String.format("%06d", new Random().nextInt(999999));
         
@@ -46,17 +49,52 @@ public class OtpService {
         User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy người dùng"));
 
+        // Kiểm tra OTP có tồn tại không
+        if (user.getOtp() == null || user.getOtpExpiredAt() == null) {
+            throw new InvalidOtpException("OTP không tồn tại hoặc đã được sử dụng");
+        }
+
+        // Kiểm tra OTP có đúng không
         if (user.getOtp().equals(otp)) {
+            // Kiểm tra hết hạn
             if (LocalDateTime.now().isBefore(user.getOtpExpiredAt())) {
                 user.setOtpVerified(true);
-                user.setOtp(null);
+                user.setOtp(null);  // Xóa OTP sau khi verify thành công
                 user.setOtpExpiredAt(null);
                 userRepository.save(user);
                 return true;
             } else {
+                clearExpiredOtp(email); // Xóa OTP hết hạn
                 throw new InvalidOtpException("OTP đã hết hạn");
             }
         }
         return false;
+    }
+
+    public boolean isOtpExpired(String email) {
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy người dùng"));
+
+        // Kiểm tra nếu OTP đã hết hạn hoặc không tồn tại
+        if (user.getOtpExpiredAt() == null || user.getOtp() == null) {
+            return true;
+        }
+
+        boolean isExpired = LocalDateTime.now().isAfter(user.getOtpExpiredAt());
+        if (isExpired) {
+            clearExpiredOtp(email); // Xóa OTP nếu đã hết hạn
+        }
+        return isExpired;
+    }
+
+    // Thêm method mới để xóa OTP hết hạn
+    private void clearExpiredOtp(String email) {
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy người dùng"));
+        
+        user.setOtp(null);
+        user.setOtpExpiredAt(null);
+        user.setOtpVerified(false);
+        userRepository.save(user);
     }
 }

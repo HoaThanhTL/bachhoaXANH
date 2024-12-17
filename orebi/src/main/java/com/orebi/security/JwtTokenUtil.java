@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -20,23 +19,38 @@ public class JwtTokenUtil {
     @Value("${jwt.secret}")
     private String secret;
 
-    @Value("${jwt.expiration}")
-    private Long expiration;
+    @Value("${jwt.access-token-expiration}")
+    private Long accessTokenExpiration;  // 15 phút
 
-    public String generateToken(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
+    @Value("${jwt.refresh-token-expiration}")
+    private Long refreshTokenExpiration; // 7 ngày
+
+    public String generateToken(String email) {
+        return generateAccessToken(email);
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
+    public String generateAccessToken(String email) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "access");
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
-                .signWith(SignatureAlgorithm.HS512, secret)
-                .compact();
+            .setClaims(claims)
+            .setSubject(email)
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
+            .signWith(SignatureAlgorithm.HS512, secret)
+            .compact();
+    }
+
+    public String generateRefreshToken(String email) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "refresh");
+        return Jwts.builder()
+            .setClaims(claims)
+            .setSubject(email)
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
+            .signWith(SignatureAlgorithm.HS512, secret)
+            .compact();
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {

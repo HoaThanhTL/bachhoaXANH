@@ -1,27 +1,69 @@
-import React, { useState } from "react";
-import Avatar from "./Avatar/Avatar";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; 
 import ChangePassword from "./ChangePassword/ChangePassword";
 import ProfileInfo from "./Profile/ProfileInfo";
 import EditProfile from "./EditProfile/EditProfile";
 import Sidebar from "./Sidebar";
 import OrderHistory from "../history/OrderHistory/OrderHistory";
-import ProductReviews from "../history/ProductReviews/ProductReviews";
 import PrivacyPolicy from "./PrivacyPolicy/PrivacyPolicy";
 import Notifications from "./Notifications/Notifications";
 import Offers from "./Offers/Offers";
-import userData from "../../home/data/userData";
 import "./Profile.css";
 
 const Profile = () => {
+  const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState("profile");
-  const user = userData.user;
-  const orderHistory = userData.orderHistory;
-  const reviews = userData.reviews;
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleLogout = () => {
-    // Xử lý logic đăng xuất tại đây
-    console.log("Đăng xuất thành công");
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setLoading(true);
+  
+        const accessToken = localStorage.getItem("authToken");
+        const userId = localStorage.getItem("userId");
+
+        if (!accessToken || !userId) {
+          throw new Error("Không tìm thấy token hoặc userId. Vui lòng đăng nhập lại.");
+        }
+  
+        const response = await fetch(`http://127.0.0.1:8080/api/users/current`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+  
+        if (!response.ok) {
+          throw new Error("Lỗi khi gọi API: " + response.statusText);
+        }
+  
+        const data = await response.json();
+        setUser(data); // Cập nhật thông tin người dùng
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchUserData();
+  }, [navigate]);
+  
+  const updateUserProfile = (updatedUser) => {
+    setUser(updatedUser); // Cập nhật user state với thông tin mới
   };
+  
+  const handleLogout = () => {
+    localStorage.removeItem("authToken"); // Xóa token khi đăng xuất
+    navigate("/signin"); // Điều hướng về trang đăng nhập
+  };
+
+  if (loading) return <div>Đang tải...</div>;
+  if (error) return <div>Lỗi: {error}</div>;
 
   return (
     <div className="profile-container">
@@ -30,12 +72,11 @@ const Profile = () => {
       </div>
 
       <div className="profile-content">
-        {selectedTab === "profile" && <ProfileInfo user={user} />}
-        {selectedTab === "editProfile" && <EditProfile user={user} />}
+        {selectedTab === "profile" && user && <ProfileInfo user={user} />}
+        {selectedTab === "editProfile" && user && <EditProfile user={user} updateUserProfile={updateUserProfile} />}
         {selectedTab === "offers" && <Offers />}
         {selectedTab === "notifications" && <Notifications />}
-        {selectedTab === "orderHistory" && <OrderHistory orderHistory={orderHistory} />}
-        {/* {selectedTab === "productReviews" && <ProductReviews reviews={reviews} />} */}
+        {selectedTab === "orderHistory" && <OrderHistory orderHistory={[]} />}
         {selectedTab === "changePassword" && <ChangePassword />}
         {selectedTab === "privacyPolicy" && <PrivacyPolicy />}
         {selectedTab === "logout" && (

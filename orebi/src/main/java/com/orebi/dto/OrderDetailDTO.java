@@ -2,12 +2,15 @@ package com.orebi.dto;
 
 public class OrderDetailDTO {
     private Long orderDetailId;
-    private Long orderId; // Chỉ lưu ID của Order
-    private Long productId; // Chỉ lưu ID của Product
+    private Long orderId;
+    private Long snapshotProductId;
+    private String snapshotProductName;
+    private String snapshotProductImage;
+    private double snapshotPrice;
     private int quantity;
     private double totalLineItem;
 
-    // Getters and Setters
+    // Getters and setters
     public Long getOrderDetailId() {
         return orderDetailId;
     }
@@ -16,20 +19,36 @@ public class OrderDetailDTO {
         this.orderDetailId = orderDetailId;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public Long getSnapshotProductId() {
+        return snapshotProductId;
     }
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
+    public void setSnapshotProductId(Long snapshotProductId) {
+        this.snapshotProductId = snapshotProductId;
     }
 
-    public Long getProductId() {
-        return productId;
+    public String getSnapshotProductName() {
+        return snapshotProductName;
     }
 
-    public void setProductId(Long productId) {
-        this.productId = productId;
+    public void setSnapshotProductName(String snapshotProductName) {
+        this.snapshotProductName = snapshotProductName;
+    }
+
+    public String getSnapshotProductImage() {
+        return snapshotProductImage;
+    }
+
+    public void setSnapshotProductImage(String snapshotProductImage) {
+        this.snapshotProductImage = snapshotProductImage;
+    }
+
+    public double getSnapshotPrice() {
+        return snapshotPrice;
+    }
+
+    public void setSnapshotPrice(double snapshotPrice) {
+        this.snapshotPrice = snapshotPrice;
     }
 
     public int getQuantity() {
@@ -46,5 +65,13 @@ public class OrderDetailDTO {
 
     public void setTotalLineItem(double totalLineItem) {
         this.totalLineItem = totalLineItem;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 }

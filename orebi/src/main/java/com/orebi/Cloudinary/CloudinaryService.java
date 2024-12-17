@@ -17,6 +17,15 @@ public class CloudinaryService {
 
     public CloudinaryUploadResponse uploadFile(MultipartFile file) {
         try {
+            if (file == null || file.isEmpty()) {
+                throw new IllegalArgumentException("File không được để trống");
+            }
+
+            String contentType = file.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                throw new IllegalArgumentException("Chỉ chấp nhận file ảnh");
+            }
+
             Map<?, ?> result = cloudinary.uploader().upload(
                 file.getBytes(),
                 ObjectUtils.asMap(

@@ -1,0 +1,76 @@
+/* src/components/user/profile/Logout/Logout.css */
+
+.logout-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  .logout-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #f44336;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .logout-button:hover {
+    background-color: #d32f2f;
+  }
+  
+  .logout-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    text-align: center;
+  }
+  
+  .modal-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+  }
+  
+  .confirm-btn,
+  .cancel-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .confirm-btn {
+    background-color: #4caf50;
+    color: #fff;
+  }
+  
+  .confirm-btn:hover {
+    background-color: #388e3c;
+  }
+  
+  .cancel-btn {
+    background-color: #f44336;
+    color: #fff;
+  }
+  
+  .cancel-btn:hover {
+    background-color: #d32f2f;
+  }
+  

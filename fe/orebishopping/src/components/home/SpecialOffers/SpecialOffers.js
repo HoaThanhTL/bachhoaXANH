@@ -3,24 +3,34 @@ import { Link } from "react-router-dom";
 import Slider from "react-slick";
 import Heading from "../Products/Heading";
 import Product from "../Products/Product";
-import { newArrOne, newArrTwo, newArrThree, newArrFour } from "../../../assets/images/index"; // Import các hình ảnh
-
-// Dữ liệu sản phẩm giảm giá từ 30% trở lên
-import { newArrivalsData } from "../data/newArrivalsData"; 
+import axios from "axios"; // Import axios để gọi API
 
 // Import các nút điều hướng
 import SampleNextArrow from "../NewArrivals/SampleNextArrow";
 import SamplePrevArrow from "../NewArrivals/SamplePrevArrow";
 
 const SpecialOffers = () => {
-  const [discountedProducts, setDiscountedProducts] = useState([]);
+  const [discountedProducts, setDiscountedProducts] = useState([]); // Lưu trữ sản phẩm giảm giá
+  const [loading, setLoading] = useState(true); // Trạng thái tải dữ liệu
+  const [error, setError] = useState(null); // Trạng thái lỗi nếu có
 
   useEffect(() => {
-    // Lọc ra các sản phẩm có discount từ 30% trở lên
-    const filteredProducts = newArrivalsData.filter((product) => {
-      return product.discountPercentage >= 30;
-    });
-    setDiscountedProducts(filteredProducts);
+    const fetchDiscountedProducts = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8080/api/products"); // Gọi API lấy sản phẩm
+        const filteredProducts = response.data.filter(
+          (product) => product.discountPercentage >= 10 // Lọc sản phẩm có giảm giá >= 10%
+        );
+        setDiscountedProducts(filteredProducts); // Lưu trữ sản phẩm đã lọc
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setError("Có lỗi khi tải dữ liệu");
+      } finally {
+        setLoading(false); // Kết thúc việc tải dữ liệu
+      }
+    };
+
+    fetchDiscountedProducts(); // Gọi hàm khi component mount
   }, []);
 
   // Cài đặt cấu hình slider
@@ -42,17 +52,27 @@ const SpecialOffers = () => {
     slidesToShow: 4,
   };
 
+  // Hiển thị loading nếu chưa tải xong dữ liệu
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  // Hiển thị thông báo lỗi nếu có lỗi
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
     <div className="w-full pb-20">
-      <Heading heading="Special Offers" />
+      <Heading heading="KHUYẾN MÃI SỐC" />
       {/* Hiển thị sản phẩm giảm giá */}
       <Slider {...productSliderSettings}>
         {discountedProducts.map((product) => (
-          <div key={product._id} className="relative px-2">
+          <div key={product.productId} className="relative px-2">
             <Product
-              _id={product._id}
-              img={product.img}
-              productName={product.productName}
+              _id={product.productId}
+              img={product.image}
+              productName={product.name}
               originalPrice={product.originalPrice}
               discountedPrice={product.discountedPrice}
               discountPercentage={product.discountPercentage}

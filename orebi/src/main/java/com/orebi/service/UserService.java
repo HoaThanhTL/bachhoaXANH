@@ -16,8 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.orebi.dto.LoginDTO;
-import com.orebi.dto.MessageResponse;
 import com.orebi.dto.RegisterDTO;
+import com.orebi.dto.response.MessageResponse;
 import com.orebi.entity.Role;
 import com.orebi.entity.User;
 import com.orebi.exception.ResourceNotFoundException;
@@ -72,32 +72,51 @@ public class UserService {
 
     public ResponseEntity<?> registerUser(RegisterDTO registerDTO) {
         try {
-            if (userRepository.findByEmail(registerDTO.getEmail()).isPresent()) {
-                return ResponseEntity.badRequest().body(new MessageResponse("Email đã tồn tại"));
+            // Kiểm tra email đã tồn tại
+            Optional<User> existingUser = userRepository.findByEmail(registerDTO.getEmail());
+            
+            if (existingUser.isPresent()) {
+                User user = existingUser.get();
+                // Nếu tài khoản chưa xác thực OTP, xóa và đăng ký lại
+                if (!user.isOtpVerified()) {
+                    userRepository.delete(user);
+                } else {
+                    return ResponseEntity.badRequest()
+                        .body(new MessageResponse("Email đã tồn tại và đã được xác thực"));
+                }
             }
 
-            User user = new User();
-            user.setName(registerDTO.getName());
-            user.setEmail(registerDTO.getEmail());
-            user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
-            user.setPhone(registerDTO.getPhone());
-            user.setOtpVerified(false);
+            // Tạo user mới
+            User newUser = new User();
+            newUser.setName(registerDTO.getName());
+            newUser.setEmail(registerDTO.getEmail());
+            newUser.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
+            newUser.setPhone(registerDTO.getPhone());
+            newUser.setOtpVerified(false);
 
+            // Set role mặc định
             Role userRole = roleRepository.findByRoleName("ROLE_USER")
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy ROLE_USER"));
-            user.setRole(userRole);
+            newUser.setRole(userRole);
 
+            // Tạo và set OTP
             String otp = generateOTP();
-            user.setOtp(otp);
-            user.setOtpExpiredAt(LocalDateTime.now().plusMinutes(5));
+            newUser.setOtp(otp);
+            newUser.setOtpExpiredAt(LocalDateTime.now().plusMinutes(5));
 
-            userRepository.save(user);
-            emailService.sendVerificationEmail(user.getEmail(), otp);
+            // Lưu user và gửi email
+            userRepository.save(newUser);
+            emailService.sendVerificationEmail(newUser.getEmail(), otp);
 
-            return ResponseEntity.ok(new MessageResponse("Đăng ký thành công. Vui lòng kiểm tra email để xác thực tài khoản"));
+            return ResponseEntity.ok(new MessageResponse(
+                existingUser.isPresent() 
+                    ? "Email đã tồn tại nhưng chưa xác thực. Đã gửi lại mã OTP mới, vui lòng kiểm tra email để xác thực tài khoản"
+                    : "Đăng ký thành công. Vui lòng kiểm tra email để xác thực tài khoản"
+            ));
             
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Lỗi đăng ký: " + e.getMessage()));
+            return ResponseEntity.badRequest()
+                .body(new MessageResponse("Lỗi đăng ký: " + e.getMessage()));
         }
     }
 
@@ -109,7 +128,6 @@ public class UserService {
 
     public String loginUser(LoginDTO loginDTO) {
         try {
-            // Xác thực thông tin đăng nhập
             Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                     loginDTO.getEmail(), 
@@ -117,17 +135,8 @@ public class UserService {
                 )
             );
 
-            // Kiểm tra trạng thái xác thực email và OTP
-            User user = userRepository.findByEmail(loginDTO.getEmail())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
-
-            if (!user.isOtpVerified()) {
-                throw new RuntimeException("Tài khoản chưa được xác thực. Vui lòng xác thực email và OTP trước khi đăng nhập.");
-            }
-
-            // Nếu xác thực thành công, tạo và trả về token
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            return jwtTokenUtil.generateToken(authentication);
+            return jwtTokenUtil.generateToken(authentication.getName());
             
         } catch (AuthenticationException e) {
             throw new RuntimeException("Email hoặc mật khẩu không chính xác");
@@ -205,5 +214,16 @@ public class UserService {
             
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
+    }
+
+    public User authenticate(String email, String password) {
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+            
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+        
+        return user;
     }
 }

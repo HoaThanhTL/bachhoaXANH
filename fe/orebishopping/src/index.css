@@ -32,3 +32,13 @@ nav .active li {
   display: none;
 }
 /* ============= NavLink active End here ================ */
+/* Thêm padding-top cho phần nội dung chính */
+body {
+  margin: 0;
+  padding-top: 80px; /* Thêm khoảng cách từ đầu trang để tránh bị header che */
+}
+
+/* Hoặc nếu bạn có class hoặc id riêng cho phần nội dung */
+.main-content {
+  padding-top: 80px; /* Thêm khoảng cách cho phần nội dung */
+}

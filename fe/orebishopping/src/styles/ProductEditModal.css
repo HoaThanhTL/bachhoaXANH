@@ -1,0 +1,135 @@
+/* Modal Background */
+.product-edit-modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+  
+  /* Modal Content */
+  .product-edit-modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 900px;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Title */
+  .product-edit-modal-content h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  /* Modal Body: Flex container for splitting left and right sections */
+  .product-edit-modal-body {
+    display: flex;
+    gap: 30px;
+  }
+  
+  /* Left Section for Product Info */
+  .product-edit-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .product-edit-form-group {
+    margin-bottom: 20px;
+  }
+  
+  .product-edit-form-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 5px;
+    display: block;
+  }
+  
+  .product-edit-form-group input {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+  
+  .product-edit-form-group input:focus {
+    border-color: #007bff;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  /* Right Section for Product Details */
+  .product-edit-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .product-edit-table-row {
+    display: flex;
+    margin-bottom: 10px;
+  }
+  
+  .product-edit-table-cell {
+    width: 32%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin-right: 5px;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+  }
+  
+  /* Save and Close Buttons */
+  .product-edit-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .product-edit-actions button {
+    padding: 12px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .product-edit-actions button:hover {
+    background-color: #0056b3;
+  }
+  
+  .product-edit-close-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  
+  .product-edit-close-button:hover {
+    background-color: #c82333;
+  }
+  

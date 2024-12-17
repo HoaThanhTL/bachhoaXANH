@@ -29,6 +29,8 @@ public class User {
     
     private String phone;
 
+    private String address;
+
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
@@ -43,7 +45,6 @@ public class User {
     public User() {
     }
     
-
     // Getters and Setters
     public Long getUserId() {
         return userId;
@@ -115,6 +116,14 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
 }

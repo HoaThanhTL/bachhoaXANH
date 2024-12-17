@@ -1,0 +1,126 @@
+/* Sidebar.css */
+.sidebar {
+    width: 250px;  /* Kích thước khi mở rộng */
+    height: 100vh;
+    background: radial-gradient(159.85% 367.97% at 150% 123.85%, #ffe147 0%, #65ae17 38.76%, #469c4b 59.65%, #00713b 100%);
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: width 0.3s ease;
+    padding: 20px 0;
+  }
+  
+  .sidebar.closed {
+    width: 80px;  /* Kích thước khi thu gọn */
+  }
+  
+  .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .sidebar-header h3 {
+    display: inline-block;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .toggle-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: rgb(0, 97, 51);  /* Màu xanh lá đậm */
+    font-size: 20px;
+  }
+  
+  .toggle-btn:hover {
+    opacity: 0.7;
+  }
+  
+  .sidebar-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .sidebar-list li {
+    padding: 15px;
+    /* margin-bottom: 10px; */
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    transition: padding 0.3s ease;
+    cursor: pointer;  /* Để con trỏ chuột thành dạng pointer khi hover */
+
+  }
+  
+  .sidebar-list li a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    width: 100%;  /* Đảm bảo link chiếm toàn bộ chiều rộng của li */
+  }
+  
+  .sidebar-list li a svg {
+    margin-right: 15px;
+  }
+  
+  /* Màu nền khi hover và khi chọn */
+  .sidebar-list li:hover,
+  .sidebar-list li.selected {
+    background-color: rgba(216, 236, 212, 255);  /* Nền khi hover và khi chọn */
+    color: rgb(0, 97, 51);  /* Màu chữ xanh lá đậm */
+  }
+  
+  .sidebar-list li a:hover {
+    background-color: rgba(216, 236, 212, 255);  /* Nền khi hover cho link */
+  }
+  
+  .sidebar-list li a:hover,
+  .sidebar-list li.selected a:hover {
+    background-color: rgba(216, 236, 212, 255);  /* Nền hover */
+    color: rgb(0, 97, 51);  /* Màu chữ xanh lá đậm */
+  }
+  
+  /* Điều chỉnh khi sidebar đóng */
+  .sidebar.closed .sidebar-list li a svg {
+    margin-right: 0;
+  }
+  
+  /* Danh mục con */
+  .sub-menu {
+    list-style-type: none;
+    padding-left: 20px; /* Thụt vào */
+    margin: 0;
+  }
+  
+  .sub-menu li {
+    padding: 10px 0;
+  }
+  
+  .sub-menu li a {
+    font-size: 16px;
+  }
+  
+  /* Hiệu ứng mở rộng/thu gọn */
+  .sub-menu {
+    display: none;
+  }
+  
+  .sidebar.open .sub-menu {
+    display: block;
+  }
+  
+  .sidebar-list li:hover .sub-menu {
+    display: block;
+  }
+  
+  .sidebar-list li.selected:hover {
+    color: rgb(0, 97, 51); /* Màu xanh lá đậm */
+    font-weight: bold;
+  }

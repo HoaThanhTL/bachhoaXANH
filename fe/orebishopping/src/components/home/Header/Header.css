@@ -1,0 +1,88 @@
+.w-full {
+    width: 100%;
+  }
+  
+  .h-10 {
+    height: 2.5rem; /* 10 x 0.25rem */
+  }
+  
+  .sticky {
+    position: sticky;
+    top: 0;
+    z-index: 50; /* Giúp nó luôn ở trên các phần tử khác */
+  }
+  
+  .z-50 {
+    z-index: 50;
+  }
+  
+  .bg-white {
+    background-color: #ffffff;
+  }
+  
+  .border-b {
+    border-bottom-width: 1px;
+  }
+  
+  .border-b-gray-200 {
+    border-bottom-color: #e5e7eb;
+  }
+  
+  .stickyHeader {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    width: 100%;
+    background: radial-gradient(159.85% 367.97% at 150% 123.85%, #ffe147 0, #65ae17 38.76%, #469c4b 59.65%, #00713b 100%);
+    border-bottom: 1px solid #e5e7eb; /* Thêm viền dưới cho header */
+  }
+  
+  .sidenav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: #ffffff;
+    z-index: 100; /* Đảm bảo sidenav hiển thị trên header */
+  }
+  .w-full {
+    width: 100%;
+  }
+  
+  .h-10 {
+    height: 2.5rem; /* 10 x 0.25rem */
+  }
+  
+  .stickyHeader {
+    position: sticky;
+    top: 0; /* Điều này giúp phần tử bám chặt vào top khi cuộn */
+    z-index: 50; /* Đảm bảo header luôn nằm trên cùng */
+    width: 100%;
+    background: radial-gradient(159.85% 367.97% at 150% 123.85%, #ffe147 0, #65ae17 38.76%, #469c4b 59.65%, #00713b 100%);
+    border-bottom: 1px solid #e5e7eb; /* Thêm viền dưới cho header */
+  }
+  
+  .sidenav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: #ffffff;
+    z-index: 100; /* Đảm bảo sidenav hiển thị trên header */
+  }
+  
+  body {
+    margin: 0; /* Đảm bảo không có khoảng cách thừa */
+    padding: 0;
+  }
+  
+  html {
+    scroll-behavior: smooth; /* Thêm smooth scroll nếu muốn */
+  }
+  .bg-\[\#F5F5F3\] {
+    background: radial-gradient(159.85% 367.97% at 150% 123.85%, #ffe147 0, #65ae17 38.76%, #469c4b 59.65%, #00713b 100%);
+    --tw-bg-opacity: 1;
+    background-color: rgb(245 245 243 / var(--tw-bg-opacity, 1));
+}

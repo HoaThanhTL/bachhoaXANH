@@ -69,6 +69,7 @@ const Home = () => {
           </Routes> */}
 
           <div>
+            <SpecialOffers />
             <NewArrivals />
             <div className="mt-4 text-center">
               <Link 
@@ -82,7 +83,6 @@ const Home = () => {
 
           <BestSellers />
           <YearProduct />
-          <SpecialOffers />
         </div>
       </div>
     </div>

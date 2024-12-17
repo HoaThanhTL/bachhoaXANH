@@ -21,7 +21,7 @@ const Category = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8080/api/categories/tree");
+        const response = await fetch("http://127.0.0.1:8080/api/categories");
         const data = await response.json();
         setCategories(data); // Lưu dữ liệu vào state
       } catch (error) {

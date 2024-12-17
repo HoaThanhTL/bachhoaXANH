@@ -1,71 +1,49 @@
 package com.orebi.controller;
 
-import com.orebi.dto.OrderDetailDTO;
-import com.orebi.entity.OrderDetail;
-import com.orebi.service.OrderDetailService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.orebi.dto.OrderDetailDTO;
+import com.orebi.service.OrderService;
 
 @RestController
 @RequestMapping("/api/order-details")
 public class OrderDetailController {
     @Autowired
-    private OrderDetailService orderDetailService;
+    private OrderService orderService;
 
-    @GetMapping
-    public List<OrderDetailDTO> getAllOrderDetails() {
-        return orderDetailService.getAllOrderDetails().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<List<OrderDetailDTO>> getOrderDetailsByOrderId(@PathVariable Long orderId) {
+        return orderService.getOrderById(orderId)
+            .map(orderDTO -> ResponseEntity.ok(orderDTO.getOrderDetails()))
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OrderDetailDTO> getOrderDetailById(@PathVariable Long id) {
-        return orderDetailService.getOrderDetailById(id)
-                .map(this::convertToDTO)
+    public ResponseEntity<OrderDetailDTO> getOrderDetailById(@PathVariable Long orderId, @PathVariable Long id) {
+        return orderService.getOrderById(orderId)
+            .map(orderDTO -> orderDTO.getOrderDetails().stream()
+                .filter(detail -> detail.getOrderDetailId().equals(id))
+                .findFirst()
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build()))
+            .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public OrderDetailDTO createOrderDetail(@RequestBody OrderDetailDTO orderDetailDTO) {
-        OrderDetail orderDetail = convertToEntity(orderDetailDTO);
-        OrderDetail createdOrderDetail = orderDetailService.createOrderDetail(orderDetail);
-        return convertToDTO(createdOrderDetail);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<OrderDetailDTO> updateOrderDetail(@PathVariable Long id, @RequestBody OrderDetailDTO orderDetailDTO) {
-        return orderDetailService.updateOrderDetail(id, convertToEntity(orderDetailDTO))
-                .map(this::convertToDTO)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOrderDetail(@PathVariable Long id) {
-        orderDetailService.deleteOrderDetail(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    private OrderDetailDTO convertToDTO(OrderDetail orderDetail) {
-        OrderDetailDTO dto = new OrderDetailDTO();
-        dto.setOrderDetailId(orderDetail.getOrderDetailId());
-        dto.setOrderId(orderDetail.getOrder().getOrderId());
-        dto.setProductId(orderDetail.getProduct().getProductId());
-        dto.setQuantity(orderDetail.getQuantity());
-        dto.setTotalLineItem(orderDetail.getTotalLineItem());
-        return dto;
-    }
-
-    private OrderDetail convertToEntity(OrderDetailDTO orderDetailDTO) {
-        OrderDetail orderDetail = new OrderDetail();
-        orderDetail.setOrderDetailId(orderDetailDTO.getOrderDetailId());
-        // Set Order and Product entities based on IDs
-        return orderDetail;
+    @GetMapping("/product/{productId}")
+    public ResponseEntity<List<OrderDetailDTO>> getOrderDetailsByProductId(@PathVariable Long productId) {
+        List<OrderDetailDTO> details = orderService.getAllOrders().stream()
+            .flatMap(order -> order.getOrderDetails().stream())
+            .filter(detail -> detail.getSnapshotProductId().equals(productId))
+            .collect(Collectors.toList());
+        
+        return ResponseEntity.ok(details);
     }
 }
